@@ -37,3 +37,5 @@ Place the official CSV files here:
 data/raw/UNSW-NB15/UNSW_NB15_training-set.csv
 data/raw/UNSW-NB15/UNSW_NB15_testing-set.csv
 ```
+
+The folder is present in Git through `.gitkeep` placeholder files. The actual CSV files are intentionally ignored so the repository stays lightweight.

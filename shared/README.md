@@ -47,6 +47,8 @@ The `data/` folder is intentionally ignored by Git because datasets can be large
 Install dependencies:
 
 ```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 

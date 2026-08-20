@@ -20,3 +20,14 @@ UNSW-NB15 is treated as a binary classification problem using the `label` column
 
 **Viva defense point:**  
 Dropping `attack_cat` is necessary because it is not a network measurement; it is already a label-like explanation of the attack type. A model trained with it would be learning from the answer key.
+
+### 2026-08-20 - Phase 1: Environment and data folders
+
+**Why we're doing it:**  
+The virtual environment makes results easier to reproduce because dependencies are installed for this project only. The visible data folder removes ambiguity about where the UNSW-NB15 CSVs must go.
+
+**How it works technically:**  
+`.venv` will contain an isolated Python interpreter and site-packages directory once recreated. `.gitignore` excludes `.venv`, generated outputs, and real dataset files. Tiny `.gitkeep` files are tracked so GitHub shows `data/raw/UNSW-NB15/` even before the CSVs are added locally.
+
+**Practical note:**  
+The first dependency install attempt failed with `No space left on device`. This is not a code bug; it means the laptop needs more free disk space before installing large ML packages such as PyTorch.

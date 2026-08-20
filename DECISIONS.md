@@ -25,3 +25,19 @@
 **Why:** `id` is an arbitrary row identifier, and `attack_cat` describes the attack class. Keeping either would make the classifier look better without learning real traffic behavior.
 
 **Tradeoff:** Dropping `attack_cat` means the Phase 1 baseline is binary detection rather than multiclass attack classification. This is simpler and better aligned with later robustness and FL experiments.
+
+### 2026-08-20 - Phase 1 local environment
+
+**Decision:** Use a project-local virtual environment named `.venv`.
+
+**Why:** ML projects depend on specific library versions. A virtual environment keeps PyTorch, scikit-learn, pandas, and related packages isolated from system Python and from other coursework.
+
+**Tradeoff:** The environment must be activated before running project commands, but this small habit prevents dependency conflicts later.
+
+### 2026-08-20 - Phase 1 data folder tracking
+
+**Decision:** Track empty data directories with `.gitkeep`, but ignore actual dataset CSV files.
+
+**Why:** Git does not track empty folders, so placeholders make the expected dataset path visible. The real CSVs are large data artifacts and should stay local.
+
+**Tradeoff:** Teammates must download or copy the dataset themselves, but the repository remains lightweight and GitHub-friendly.

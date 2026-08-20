@@ -51,3 +51,31 @@ Every later phase depends on a fair baseline. The adversarial attacks need a mod
 
 **Analogy:**  
 The shared baseline is the calibrated measuring instrument for the whole project. Before testing attacks, defenses, or privacy noise, we first make sure everyone is measuring from the same ruler.
+
+### 2026-08-20 - Phase 1: Environment and Data Placement
+
+**What it does in plain language:**  
+Creates a private Python environment for the project and makes the expected dataset folder visible.
+
+**Why it exists:**  
+The baseline cannot be trained until dependencies and CSVs are in the right place. The environment keeps dependencies controlled, and the data folder tells every teammate exactly where the dataset goes.
+
+**Likely teacher questions and confident answers:**
+
+1. **Why use a virtual environment?**  
+   It isolates this project's packages, so results do not depend on unrelated Python packages installed elsewhere on the laptop.
+
+2. **Why is the `data` folder in GitHub but not the CSV files?**  
+   The folder path is part of the project contract, but datasets are large artifacts. We track placeholders and ignore real CSVs.
+
+3. **Where exactly do the UNSW-NB15 files go?**  
+   They go in `data/raw/UNSW-NB15/` with the official filenames `UNSW_NB15_training-set.csv` and `UNSW_NB15_testing-set.csv`.
+
+4. **Why not commit the dataset for convenience?**  
+   Large datasets bloat Git history and may have redistribution rules. Keeping them local is cleaner and more professional.
+
+**Analogy:**  
+The virtual environment is the project toolbox, and the data folder is the labeled shelf where the raw materials go.
+
+**Current blocker:**  
+The data folder exists, but dependencies are not installed. The first `pip install -r requirements.txt` attempt failed because the device ran out of space, and the empty failed `.venv` was removed.

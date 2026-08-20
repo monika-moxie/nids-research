@@ -18,3 +18,21 @@ Each session should work on one phase only. At the end of every session, update:
 - `DECISIONS.md`
 - `LEARNING_LOG.md`
 - `HANDOFF.md`
+
+## Local Environment
+
+Use a project-local virtual environment:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+The official UNSW-NB15 CSV files belong in:
+
+```text
+data/raw/UNSW-NB15/
+```
+
+The folder is tracked, but the CSV files are ignored because datasets should not be committed to Git.

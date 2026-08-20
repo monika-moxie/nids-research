@@ -7,7 +7,14 @@ __pycache__/
 venv/
 
 # Local data and generated artifacts
-data/
+data/*
+!data/.gitkeep
+!data/raw/
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/UNSW-NB15/
+data/raw/UNSW-NB15/*
+!data/raw/UNSW-NB15/.gitkeep
 outputs/
 *.pt
 *.pth
