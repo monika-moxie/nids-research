@@ -2,10 +2,11 @@
 
 ## Current State
 
-- Phase 0 is complete: repository scaffold, purpose READMEs, and session continuity documents are in place.
-- No dataset, model, attack, defense, federated learning, or paper experiments have been implemented yet.
+- Phase 1 is partially complete: dataset choice, preprocessing code, baseline model code, training CLI, and preprocessing smoke test are in place.
+- UNSW-NB15 is selected as the shared dataset for binary intrusion detection.
+- Baseline metrics code exists, but real metrics have not been generated because the official CSV files and PyTorch dependency are not installed locally yet.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 1: dataset choice, preprocessing plan, baseline classifier, and baseline metrics.
+- Next session should finish Phase 1 by installing dependencies, adding the official UNSW-NB15 CSVs, running training, and recording baseline metrics.
 
 ## Phase Tracker
 
@@ -23,3 +24,7 @@
 ### 2026-08-20 - Phase 0
 
 Initialized the scaffold for `nids-research` and created purpose READMEs for each major project area.
+
+### 2026-08-20 - Phase 1
+
+Selected UNSW-NB15 for the shared binary NIDS baseline. Added reusable preprocessing, a PyTorch MLP baseline, a training/evaluation CLI, dependency list, data documentation, and a preprocessing smoke test.

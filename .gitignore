@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Local data and generated artifacts
+data/
+outputs/
+*.pt
+*.pth
+*.joblib
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/

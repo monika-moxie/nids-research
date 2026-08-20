@@ -26,3 +26,28 @@ The project combines NIDS classification, adversarial ML, certified robustness, 
 
 **Analogy:**  
 This scaffold is like a lab notebook with labeled benches: one bench for the common dataset/model, one for attacks, one for federated training, one for combined stress testing, and one for writing the final report.
+
+### 2026-08-20 - Phase 1: Shared Baseline Pipeline
+
+**What it does in plain language:**  
+Chooses UNSW-NB15 as the common NIDS dataset and adds the first reusable machine learning pipeline: clean the data, train a deep binary classifier, and report standard detection metrics.
+
+**Why it exists:**  
+Every later phase depends on a fair baseline. The adversarial attacks need a model to attack, randomized smoothing needs a model to certify, federated learning needs a model to distribute, and the bridge experiment needs the same baseline for comparison.
+
+**Likely teacher questions and confident answers:**
+
+1. **Why did you choose UNSW-NB15?**  
+   It is official, citable, tabular, and has predefined training and testing CSV files. That makes the baseline reproducible and manageable for a solo project.
+
+2. **Why drop `attack_cat`?**  
+   Because the task is binary intrusion detection using `label`. `attack_cat` tells us the attack family, so using it as an input would leak label information and inflate performance.
+
+3. **Why fit preprocessing only on the training data?**  
+   The test set must simulate unseen future traffic. If we learn scaling or category information from the test set, the evaluation is no longer clean.
+
+4. **Why use a multilayer perceptron?**  
+   UNSW-NB15 is tabular flow data. A small MLP is a defensible deep baseline because it can learn nonlinear feature interactions while remaining simple enough to explain.
+
+**Analogy:**  
+The shared baseline is the calibrated measuring instrument for the whole project. Before testing attacks, defenses, or privacy noise, we first make sure everyone is measuring from the same ruler.
