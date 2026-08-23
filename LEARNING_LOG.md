@@ -58,4 +58,4 @@ PGD repeats the same idea for multiple smaller steps. After each step, it clips 
 The preprocessor names numeric features with `num__` and categorical one-hot features with `cat__`. The constrained attack builds a Boolean mask and multiplies the gradient step by that mask. Numeric features can move; categorical one-hot features stay fixed.
 
 **Result interpretation:**  
-On a 5,000-flow sample, clean F1 was 0.8913. FGSM reduced F1 to 0.2190, and PGD reduced F1 to 0.1192, showing strong vulnerability under unconstrained gradient attacks. Constrained numeric PGD reduced F1 to 0.8075, showing a smaller but more realistic robustness drop.
+On the full 82,332-row test set, clean F1 was 0.8886. FGSM reduced F1 to 0.2223, and PGD reduced F1 to 0.1143, showing strong vulnerability under unconstrained gradient attacks. Constrained numeric PGD reduced F1 to 0.8058, showing a smaller but more realistic robustness drop.

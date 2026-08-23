@@ -125,7 +125,7 @@ The CI3201 track is about adversarial robustness. A detector that performs well 
    Unconstrained attacks can alter one-hot categorical features unrealistically. Constrained numeric PGD leaves categorical indicators fixed and only changes numeric features, making it more appropriate for tabular NIDS data.
 
 4. **What did the attack results show?**  
-   On a 5,000-flow sample, clean F1 was 0.8913. FGSM dropped F1 to 0.2190, PGD dropped it to 0.1192, and constrained numeric PGD dropped it to 0.8075. This shows the model is highly vulnerable to unconstrained gradient attacks and moderately vulnerable to a more realistic numeric-only attack.
+   On the full 82,332-row test set, clean F1 was 0.8886. FGSM dropped F1 to 0.2223, PGD dropped it to 0.1143, and constrained numeric PGD dropped it to 0.8058. This shows the model is highly vulnerable to unconstrained gradient attacks and moderately vulnerable to a more realistic numeric-only attack.
 
 **Analogy:**  
 Clean testing asks whether the lock works with ordinary keys. Adversarial testing asks whether a skilled attacker can file the key slightly and still open the door.

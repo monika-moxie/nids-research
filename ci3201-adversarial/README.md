@@ -64,13 +64,13 @@ outputs/ci3201-attacks/attack_metrics.json
 
 ### Initial Results
 
-Using a deterministic 5,000-flow test sample with epsilon `0.05`, PGD steps `10`, and PGD step size `0.01`:
+Using the full 82,332-row UNSW-NB15 test set with epsilon `0.05`, PGD steps `10`, and PGD step size `0.01`:
 
 | Setting | Accuracy | F1 | ROC-AUC |
 | --- | ---: | ---: | ---: |
-| Clean | 0.8690 | 0.8913 | 0.9802 |
-| FGSM | 0.1686 | 0.2190 | 0.0699 |
-| PGD | 0.0804 | 0.1192 | 0.0163 |
-| Constrained numeric PGD | 0.7658 | 0.8075 | 0.8724 |
+| Clean | 0.8640 | 0.8886 | 0.9792 |
+| FGSM | 0.1695 | 0.2223 | 0.0707 |
+| PGD | 0.0771 | 0.1143 | 0.0162 |
+| Constrained numeric PGD | 0.7614 | 0.8058 | 0.8651 |
 
 Interpretation: the baseline is very brittle under unconstrained gradient attacks. The constrained numeric attack is less destructive, but it still reduces performance compared with clean evaluation.
