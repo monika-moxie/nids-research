@@ -7,14 +7,15 @@
 - `data/raw/UNSW-NB15/` contains the official training and testing CSV files.
 - The active project copy is now `D:\SEM5_Project`, with a working `.venv`.
 - Baseline metrics have been generated at `outputs/shared-baseline/metrics.json`: accuracy 0.8640, precision 0.8093, recall 0.9852, F1 0.8886, ROC-AUC 0.9792.
+- Phase 2 attack code and full-test-set attack metrics are in place for FGSM, PGD, and constrained numeric PGD.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 2: FGSM, PGD, and realistic constrained attacks against the shared baseline.
+- Next session should begin Phase 3: randomized smoothing and certified accuracy at multiple perturbation radii.
 
 ## Phase Tracker
 
 - [x] Phase 0 - Repo scaffolding
 - [x] Phase 1 - Shared pipeline: dataset choice, preprocessing, baseline classifier, baseline metrics
-- [ ] Phase 2 - CI3201 attack suite: FGSM, PGD, realistic constrained attack
+- [x] Phase 2 - CI3201 attack suite: FGSM, PGD, realistic constrained attack
 - [ ] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
 - [ ] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [ ] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
@@ -45,3 +46,7 @@ Recorded Phase 8 as a planned post-Phase-7 practical-applicability demo. It will
 ### 2026-08-23 - Phase 1 baseline metrics
 
 Confirmed the project has moved to `D:\SEM5_Project`, found the UNSW-NB15 CSVs and working `.venv`, then trained the shared MLP baseline for 20 epochs. Test metrics: accuracy 0.8640, precision 0.8093, recall 0.9852, F1 0.8886, ROC-AUC 0.9792, confusion matrix `[[26475, 10525], [671, 44661]]`.
+
+### 2026-08-23 - Phase 2 attack suite
+
+Added an importable `ci3201_adversarial` package with FGSM, PGD, and constrained numeric PGD attacks, plus smoke tests for perturbation-budget behavior. Ran the attack suite on the full 82,332-row UNSW-NB15 test set with epsilon 0.05, PGD steps 10, and PGD step size 0.01. Full-test F1 values: clean 0.8886, FGSM 0.2223, PGD 0.1143, constrained numeric PGD 0.8058.

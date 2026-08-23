@@ -104,3 +104,28 @@ The attack and defense phases need a fixed baseline model. These metrics are the
 
 **Analogy:**  
 This baseline is the clean driving test before we add rain, fog, and rough roads. We first need to know how the car performs under normal conditions.
+
+### 2026-08-23 - Phase 2: Attack Suite
+
+**What it does in plain language:**  
+Tests whether the trained NIDS model can be fooled by small adversarial changes to its input features.
+
+**Why it exists:**  
+The CI3201 track is about adversarial robustness. A detector that performs well on clean traffic may still fail if an attacker deliberately changes features in the direction that maximizes model error.
+
+**Likely teacher questions and confident answers:**
+
+1. **What is FGSM?**  
+   FGSM is a one-step gradient attack. It computes how each input feature should move to increase loss, then nudges every feature by a small epsilon in that direction.
+
+2. **Why is PGD stronger than FGSM?**  
+   PGD repeats multiple smaller gradient steps and clips the perturbation after each step. Because it updates the gradient repeatedly, it usually finds more damaging adversarial examples.
+
+3. **Why include constrained numeric PGD?**  
+   Unconstrained attacks can alter one-hot categorical features unrealistically. Constrained numeric PGD leaves categorical indicators fixed and only changes numeric features, making it more appropriate for tabular NIDS data.
+
+4. **What did the attack results show?**  
+   On a 5,000-flow sample, clean F1 was 0.8913. FGSM dropped F1 to 0.2190, PGD dropped it to 0.1192, and constrained numeric PGD dropped it to 0.8075. This shows the model is highly vulnerable to unconstrained gradient attacks and moderately vulnerable to a more realistic numeric-only attack.
+
+**Analogy:**  
+Clean testing asks whether the lock works with ordinary keys. Adversarial testing asks whether a skilled attacker can file the key slightly and still open the door.

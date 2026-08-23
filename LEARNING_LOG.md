@@ -42,3 +42,20 @@ The model outputs an attack probability for each test flow. A threshold of 0.5 c
 
 **Result interpretation:**  
 The baseline has high recall, 0.9852, so it catches most attacks. Precision is 0.8093, so some normal flows are falsely flagged. This is a realistic NIDS posture: sensitive detection with alert noise.
+
+### 2026-08-23 - Phase 2: Adversarial attacks
+
+**Why we're doing it:**  
+Clean accuracy does not tell us whether a detector is robust. An attacker may make small changes to traffic features to push a malicious flow across the model's decision boundary. Phase 2 measures this brittleness directly.
+
+**How FGSM works technically:**  
+FGSM computes the gradient of the binary cross-entropy loss with respect to the input feature vector. The sign of that gradient tells us whether increasing or decreasing each feature would increase the model's mistake. The attack takes one step: `x_adv = x + epsilon * sign(gradient)`.
+
+**How PGD works technically:**  
+PGD repeats the same idea for multiple smaller steps. After each step, it clips the total perturbation so no feature moves more than epsilon from its original value. This usually makes PGD stronger than FGSM because it keeps rechecking the gradient after each move.
+
+**How constrained numeric PGD works technically:**  
+The preprocessor names numeric features with `num__` and categorical one-hot features with `cat__`. The constrained attack builds a Boolean mask and multiplies the gradient step by that mask. Numeric features can move; categorical one-hot features stay fixed.
+
+**Result interpretation:**  
+On a 5,000-flow sample, clean F1 was 0.8913. FGSM reduced F1 to 0.2190, and PGD reduced F1 to 0.1192, showing strong vulnerability under unconstrained gradient attacks. Constrained numeric PGD reduced F1 to 0.8075, showing a smaller but more realistic robustness drop.

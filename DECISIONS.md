@@ -49,3 +49,27 @@
 **Why:** The model has strong attack recall and ROC-AUC, giving Phase 2 a meaningful target. It is not perfect, which is useful: later robustness work should be evaluated on a realistic detector rather than a toy model.
 
 **Tradeoff:** Precision is lower than recall, meaning the detector creates false positives. This is acceptable for the first baseline because NIDS systems often prefer catching attacks over suppressing alerts too aggressively.
+
+### 2026-08-23 - Phase 2 attack space
+
+**Decision:** Implement FGSM and PGD in the shared model's preprocessed 194-dimensional feature space.
+
+**Why:** The trained MLP only sees preprocessed numeric tensors, not raw CSV rows. Attacking this feature space directly tests the actual decision boundary learned by the model.
+
+**Tradeoff:** Fully unconstrained attacks can perturb one-hot categorical features, which may create unrealistic tabular records. To address this, Phase 2 also includes constrained numeric PGD.
+
+### 2026-08-23 - Phase 2 constrained attack
+
+**Decision:** Add a constrained PGD variant that only changes transformed numeric features whose preprocessor names begin with `num__`.
+
+**Why:** Realistic tabular NIDS attacks should not freely turn categorical one-hot indicators into fractional or contradictory values. Restricting perturbations to numeric features makes the attack less powerful but more defensible.
+
+**Tradeoff:** This is still an approximation because it operates after scaling rather than reconstructing valid raw network flows. It is a practical constrained baseline, not a perfect traffic generator.
+
+### 2026-08-23 - Phase 2 evaluation size
+
+**Decision:** Record Phase 2 attack metrics on the full official UNSW-NB15 test set.
+
+**Why:** The earlier 5,000-flow sample was useful for fast development, but final attack claims should use the same full test set as the clean baseline.
+
+**Tradeoff:** Full-test evaluation takes longer on CPU, but the resulting metrics are stronger for presentation and paper tables.
