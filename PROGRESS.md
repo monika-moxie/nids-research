@@ -2,24 +2,25 @@
 
 ## Current State
 
-- Phase 1 is partially complete: dataset choice, preprocessing code, baseline model code, training CLI, and preprocessing smoke test are in place.
+- Phase 1 is complete enough for downstream work: dataset choice, preprocessing code, baseline model code, training CLI, preprocessing smoke test, and real baseline metrics are in place.
 - UNSW-NB15 is selected as the shared dataset for binary intrusion detection.
-- `data/raw/UNSW-NB15/` is now visible for placing official CSV files.
-- A project-local `.venv` is recommended, but the first dependency install failed with `No space left on device`; the empty failed `.venv` was removed and should be recreated after freeing disk space.
-- Baseline metrics code exists, but real metrics have not been generated because dependencies and the official CSV files are not present yet.
+- `data/raw/UNSW-NB15/` contains the official training and testing CSV files.
+- The active project copy is now `D:\SEM5_Project`, with a working `.venv`.
+- Baseline metrics have been generated at `outputs/shared-baseline/metrics.json`: accuracy 0.8640, precision 0.8093, recall 0.9852, F1 0.8886, ROC-AUC 0.9792.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should finish Phase 1 by installing dependencies, adding the official UNSW-NB15 CSVs, running training, and recording baseline metrics.
+- Next session should begin Phase 2: FGSM, PGD, and realistic constrained attacks against the shared baseline.
 
 ## Phase Tracker
 
 - [x] Phase 0 - Repo scaffolding
-- [ ] Phase 1 - Shared pipeline: dataset choice, preprocessing, baseline classifier, baseline metrics
+- [x] Phase 1 - Shared pipeline: dataset choice, preprocessing, baseline classifier, baseline metrics
 - [ ] Phase 2 - CI3201 attack suite: FGSM, PGD, realistic constrained attack
 - [ ] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
 - [ ] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [ ] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
 - [ ] Phase 6 - Bridge experiment: certified robustness under FL and LDP
 - [ ] Phase 7 - Results consolidation and IEEE paper skeleton
+- [ ] Phase 8 - Deployment Intelligence Layer: practical-applicability demo on top of FastAPI deployment, clearly separated from the core research contribution
 
 ## Session Notes
 
@@ -36,3 +37,11 @@ Selected UNSW-NB15 for the shared binary NIDS baseline. Added reusable preproces
 Added tracked placeholder folders so `data/raw/UNSW-NB15/` is visible while real dataset CSVs remain ignored by Git.
 
 Attempted to create and install dependencies into `.venv`; installation failed with `No space left on device`, so the empty failed `.venv` was removed. Recreate it after freeing disk space.
+
+### 2026-08-23 - Phase 8 planning note
+
+Recorded Phase 8 as a planned post-Phase-7 practical-applicability demo. It will add a clearly separated Deployment Intelligence Layer on top of the FastAPI deployment that can call the model, certified-robustness confidence, and SHAP/LIME explainer as tools; decide escalate versus suppress for flagged flows; convert explanation output into analyst-readable plain English; and draft a short incident report. Phase 8 is not started and is not part of the core research contribution.
+
+### 2026-08-23 - Phase 1 baseline metrics
+
+Confirmed the project has moved to `D:\SEM5_Project`, found the UNSW-NB15 CSVs and working `.venv`, then trained the shared MLP baseline for 20 epochs. Test metrics: accuracy 0.8640, precision 0.8093, recall 0.9852, F1 0.8886, ROC-AUC 0.9792, confusion matrix `[[26475, 10525], [671, 44661]]`.

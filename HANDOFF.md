@@ -79,3 +79,28 @@ The virtual environment is the project toolbox, and the data folder is the label
 
 **Current blocker:**  
 The data folder exists, but dependencies are not installed. The first `pip install -r requirements.txt` attempt failed because the device ran out of space, and the empty failed `.venv` was removed.
+
+### 2026-08-23 - Phase 1: Baseline Metrics
+
+**What it does in plain language:**  
+Trains the first real NIDS baseline on UNSW-NB15 and records how well it detects attacks on the official test set.
+
+**Why it exists:**  
+The attack and defense phases need a fixed baseline model. These metrics are the clean-performance reference point before adversarial perturbations, certified smoothing, federated training, or privacy noise are introduced.
+
+**Likely teacher questions and confident answers:**
+
+1. **What is the baseline performance?**  
+   Accuracy is 0.8640, F1 is 0.8886, and ROC-AUC is 0.9792 on the official UNSW-NB15 test CSV.
+
+2. **Why is recall higher than precision?**  
+   The model catches nearly all attacks, but it also flags some normal traffic. For intrusion detection, high recall is often prioritized because missed attacks can be more costly than false alerts.
+
+3. **What does the confusion matrix mean?**  
+   `[[26475, 10525], [671, 44661]]` means 26,475 normal flows were correctly suppressed, 10,525 normal flows were false alarms, 671 attacks were missed, and 44,661 attacks were correctly detected.
+
+4. **Why can this model now be used for Phase 2?**  
+   It is accurate enough to be meaningful and imperfect enough to be realistic. Phase 2 can now measure how adversarial perturbations degrade a real trained detector.
+
+**Analogy:**  
+This baseline is the clean driving test before we add rain, fog, and rough roads. We first need to know how the car performs under normal conditions.

@@ -41,3 +41,11 @@
 **Why:** Git does not track empty folders, so placeholders make the expected dataset path visible. The real CSVs are large data artifacts and should stay local.
 
 **Tradeoff:** Teammates must download or copy the dataset themselves, but the repository remains lightweight and GitHub-friendly.
+
+### 2026-08-23 - Phase 1 baseline result
+
+**Decision:** Treat the 20-epoch MLP trained on the official UNSW-NB15 train CSV as the first shared baseline for downstream attacks and defenses.
+
+**Why:** The model has strong attack recall and ROC-AUC, giving Phase 2 a meaningful target. It is not perfect, which is useful: later robustness work should be evaluated on a realistic detector rather than a toy model.
+
+**Tradeoff:** Precision is lower than recall, meaning the detector creates false positives. This is acceptable for the first baseline because NIDS systems often prefer catching attacks over suppressing alerts too aggressively.

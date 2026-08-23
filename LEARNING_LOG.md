@@ -31,3 +31,14 @@ The virtual environment makes results easier to reproduce because dependencies a
 
 **Practical note:**  
 The first dependency install attempt failed with `No space left on device`. This is not a code bug; it means the laptop needs more free disk space before installing large ML packages such as PyTorch.
+
+### 2026-08-23 - Phase 1: Reading the baseline metrics
+
+**Why we're doing it:**  
+Baseline metrics tell us whether the shared classifier is strong enough to attack and defend. If the clean model were weak, adversarial results would be less meaningful because attacks could be exploiting a bad classifier rather than a real robustness problem.
+
+**How it works technically:**  
+The model outputs an attack probability for each test flow. A threshold of 0.5 converts that probability into normal versus attack. Accuracy measures total correctness, precision measures how many alerts are truly attacks, recall measures how many attacks are caught, F1 balances precision and recall, and ROC-AUC measures ranking quality across thresholds.
+
+**Result interpretation:**  
+The baseline has high recall, 0.9852, so it catches most attacks. Precision is 0.8093, so some normal flows are falsely flagged. This is a realistic NIDS posture: sensitive detection with alert noise.
