@@ -74,3 +74,58 @@ Using the full 82,332-row UNSW-NB15 test set with epsilon `0.05`, PGD steps `10`
 | Constrained numeric PGD | 0.7614 | 0.8058 | 0.8651 |
 
 Interpretation: the baseline is very brittle under unconstrained gradient attacks. The constrained numeric attack is less destructive, but it still reduces performance compared with clean evaluation.
+
+## Phase 3 Certified Defense: Randomized Smoothing
+
+Randomized smoothing wraps the trained baseline with Gaussian noise. Instead of predicting one flow once, it predicts many noisy copies of the same preprocessed feature vector and lets those predictions vote.
+
+### Why It Exists
+
+Phase 2 showed that gradient attacks can severely damage the baseline. Randomized smoothing asks a stronger defensive question: can we certify that the prediction is stable within a small L2 ball around the input?
+
+### How It Works Technically
+
+For each input `x`, the smoothed classifier predicts:
+
+```text
+g(x) = majority_class(f(x + noise))
+```
+
+where `noise` is Gaussian noise with standard deviation `sigma`.
+
+If the winning class receives a strong enough majority, the code estimates a conservative lower bound on that class probability using Hoeffding's inequality. For binary classification, the certified radius is:
+
+```text
+radius = sigma * Phi^-1(p_lower)
+```
+
+where `Phi^-1` is the inverse standard normal CDF. If `p_lower <= 0.5`, the classifier abstains because the noisy vote is not confident enough.
+
+Important limitation: this certificate is an L2 guarantee in preprocessed feature space. It is not a guarantee that every perturbed vector maps to a valid raw network flow.
+
+### Run
+
+```powershell
+.\.venv\Scripts\python.exe -m ci3201_adversarial.run_smoothing
+```
+
+Output:
+
+```text
+outputs/ci3201-smoothing/smoothing_metrics.json
+```
+
+### Initial Certified Results
+
+Using a deterministic 500-flow sample, sigma `0.25`, 128 noisy samples per flow, and alpha `0.001`:
+
+| Radius | Certified Accuracy |
+| ---: | ---: |
+| 0.00 | 0.8200 |
+| 0.05 | 0.7640 |
+| 0.10 | 0.6520 |
+| 0.20 | 0.1420 |
+
+Smoothed accuracy was `0.8400`, coverage was `0.9720`, and mean certified radius was `0.1360`.
+
+Interpretation: the smoothed classifier can certify many examples at small radii, but certified accuracy drops sharply at larger radii. This is expected because larger radii require stronger local stability.

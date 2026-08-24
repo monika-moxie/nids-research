@@ -59,3 +59,17 @@ The preprocessor names numeric features with `num__` and categorical one-hot fea
 
 **Result interpretation:**  
 On the full 82,332-row test set, clean F1 was 0.8886. FGSM reduced F1 to 0.2223, and PGD reduced F1 to 0.1143, showing strong vulnerability under unconstrained gradient attacks. Constrained numeric PGD reduced F1 to 0.8058, showing a smaller but more realistic robustness drop.
+
+### 2026-08-23 - Phase 3: Randomized smoothing
+
+**Why we're doing it:**  
+Attacks show that the model can fail, but a defense needs more than hope. Randomized smoothing gives a measurable statement about local stability: if noisy copies of an input mostly predict the same class, the smoothed classifier can be certified within a radius.
+
+**How it works technically:**  
+For each input vector `x`, the smoothed classifier samples many noisy versions `x + N(0, sigma^2 I)`. The base model predicts each noisy version. The majority class becomes the smoothed prediction. A lower confidence bound on the majority probability is computed with Hoeffding's inequality. If that lower bound is greater than 0.5, the binary certified radius is `sigma * Phi^-1(p_lower)`.
+
+**Result interpretation:**  
+With sigma 0.25 and 128 noisy samples on 500 flows, smoothed accuracy was 0.8400. Certified accuracy decreased as the radius grew: 0.8200 at radius 0.0, 0.7640 at 0.05, 0.6520 at 0.10, and 0.1420 at 0.20. This is expected because larger radii demand stronger guarantees.
+
+**Viva defense point:**  
+This is a certificate in L2 preprocessed feature space. It should not be oversold as a guarantee over every possible raw network flow transformation.

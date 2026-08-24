@@ -8,15 +8,16 @@
 - The active project copy is now `D:\SEM5_Project`, with a working `.venv`.
 - Baseline metrics have been generated at `outputs/shared-baseline/metrics.json`: accuracy 0.8640, precision 0.8093, recall 0.9852, F1 0.8886, ROC-AUC 0.9792.
 - Phase 2 attack code and full-test-set attack metrics are in place for FGSM, PGD, and constrained numeric PGD.
+- Phase 3 randomized smoothing code and initial certified accuracy metrics are in place on a deterministic 500-flow sample.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 3: randomized smoothing and certified accuracy at multiple perturbation radii.
+- Next session should begin Phase 4: FedAvg simulation across simulated clients, unless Phase 3 needs a larger smoothing run for final tables.
 
 ## Phase Tracker
 
 - [x] Phase 0 - Repo scaffolding
 - [x] Phase 1 - Shared pipeline: dataset choice, preprocessing, baseline classifier, baseline metrics
 - [x] Phase 2 - CI3201 attack suite: FGSM, PGD, realistic constrained attack
-- [ ] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
+- [x] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
 - [ ] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [ ] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
 - [ ] Phase 6 - Bridge experiment: certified robustness under FL and LDP
@@ -50,3 +51,7 @@ Confirmed the project has moved to `D:\SEM5_Project`, found the UNSW-NB15 CSVs a
 ### 2026-08-23 - Phase 2 attack suite
 
 Added an importable `ci3201_adversarial` package with FGSM, PGD, and constrained numeric PGD attacks, plus smoke tests for perturbation-budget behavior. Ran the attack suite on the full 82,332-row UNSW-NB15 test set with epsilon 0.05, PGD steps 10, and PGD step size 0.01. Full-test F1 values: clean 0.8886, FGSM 0.2223, PGD 0.1143, constrained numeric PGD 0.8058.
+
+### 2026-08-23 - Phase 3 randomized smoothing
+
+Added randomized smoothing certification utilities and a smoothing runner. Ran an initial deterministic 500-flow certification experiment with sigma 0.25, 128 noisy samples per flow, alpha 0.001, and radii 0.0, 0.05, 0.10, and 0.20. Smoothed accuracy was 0.8400, coverage was 0.9720, mean certified radius was 0.1360, and certified accuracy by radius was `{0.0: 0.8200, 0.05: 0.7640, 0.10: 0.6520, 0.20: 0.1420}`.

@@ -73,3 +73,19 @@
 **Why:** The earlier 5,000-flow sample was useful for fast development, but final attack claims should use the same full test set as the clean baseline.
 
 **Tradeoff:** Full-test evaluation takes longer on CPU, but the resulting metrics are stronger for presentation and paper tables.
+
+### 2026-08-23 - Phase 3 smoothing certificate
+
+**Decision:** Implement randomized smoothing certificates in the baseline model's preprocessed feature space using Gaussian noise and a conservative Hoeffding lower bound.
+
+**Why:** The baseline model operates on preprocessed tensors, so certification must be computed in that same representation. Hoeffding's inequality gives a simple valid lower confidence bound without adding new dependencies.
+
+**Tradeoff:** The certificate is conservative and applies to L2 perturbations in preprocessed feature space, not to raw network packet validity.
+
+### 2026-08-23 - Phase 3 evaluation size
+
+**Decision:** Record initial smoothing metrics on a deterministic 500-flow sample with 128 noisy samples per flow.
+
+**Why:** Randomized smoothing is computationally expensive because every original flow requires many noisy forward passes. A deterministic sample gives a reproducible first certified-defense result on CPU.
+
+**Tradeoff:** This is enough for a first Phase 3 result, but a larger run would be better for final paper-quality tables if time allows.

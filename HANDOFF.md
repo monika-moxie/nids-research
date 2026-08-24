@@ -129,3 +129,28 @@ The CI3201 track is about adversarial robustness. A detector that performs well 
 
 **Analogy:**  
 Clean testing asks whether the lock works with ordinary keys. Adversarial testing asks whether a skilled attacker can file the key slightly and still open the door.
+
+### 2026-08-23 - Phase 3: Randomized Smoothing Defense
+
+**What it does in plain language:**  
+Wraps the trained NIDS model in noise-based voting and estimates how far an input can move before the smoothed prediction is no longer certified.
+
+**Why it exists:**  
+Phase 2 showed the model is vulnerable to attacks. Phase 3 adds the certified-defense part of CI3201 by reporting robustness guarantees at multiple radii.
+
+**Likely teacher questions and confident answers:**
+
+1. **What is randomized smoothing?**  
+   It predicts many noisy copies of the same input and uses majority vote as the final prediction. If the vote is confident enough, we can certify local stability.
+
+2. **What does certified radius mean?**  
+   It is the L2 distance in preprocessed feature space within which the smoothed classifier's prediction is guaranteed to remain stable under the assumptions of randomized smoothing.
+
+3. **Why does certified accuracy decrease as radius increases?**  
+   A larger radius is a stronger requirement. Fewer examples can be proven correct and stable under larger perturbations.
+
+4. **What were the Phase 3 results?**  
+   On a deterministic 500-flow sample, smoothed accuracy was 0.8400. Certified accuracy was 0.8200 at radius 0.0, 0.7640 at 0.05, 0.6520 at 0.10, and 0.1420 at 0.20.
+
+**Analogy:**  
+Randomized smoothing is like asking a crowd of slightly noisy witnesses. If almost all witnesses agree, we trust the answer more and can tolerate more disturbance around the original input.
