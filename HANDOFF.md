@@ -154,3 +154,28 @@ Phase 2 showed the model is vulnerable to attacks. Phase 3 adds the certified-de
 
 **Analogy:**  
 Randomized smoothing is like asking a crowd of slightly noisy witnesses. If almost all witnesses agree, we trust the answer more and can tolerate more disturbance around the original input.
+
+### 2026-08-24 - Phase 4: FedAvg Simulation
+
+**What it does in plain language:**  
+Simulates several clients training a shared NIDS model without pooling their raw traffic data in one place.
+
+**Why it exists:**  
+The CI3203 track studies federated learning and privacy. FedAvg is the baseline federated algorithm we need before adding local differential privacy in Phase 5.
+
+**Likely teacher questions and confident answers:**
+
+1. **What is FedAvg?**  
+   FedAvg is federated averaging. Clients train local copies of the model, then the server averages their weights, usually weighted by how much data each client has.
+
+2. **Why weight by client dataset size?**  
+   A client with more examples provides a more statistically influential update. Weighting by `n_k / total` prevents tiny clients from affecting the global model as much as large clients.
+
+3. **What is the difference between IID and non-IID here?**  
+   IID clients get random shards that roughly match the global distribution. Non-IID clients get label-skewed shards, meaning some clients see mostly normal traffic and others mostly attacks.
+
+4. **What were the results?**  
+   With 5 clients and 3 rounds on 20,000 training rows, IID FedAvg reached F1 0.8554 and ROC-AUC 0.9361. Non-IID label-skew reached F1 0.8366 and ROC-AUC 0.8999.
+
+**Analogy:**  
+FedAvg is like five students solving the same problem set separately, then combining their answer sheets into one shared solution, giving more weight to students who saw more examples.

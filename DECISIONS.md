@@ -89,3 +89,19 @@
 **Why:** Randomized smoothing is computationally expensive because every original flow requires many noisy forward passes. A deterministic sample gives a reproducible first certified-defense result on CPU.
 
 **Tradeoff:** This is enough for a first Phase 3 result, but a larger run would be better for final paper-quality tables if time allows.
+
+### 2026-08-24 - Phase 4 FedAvg simulation design
+
+**Decision:** Simulate FedAvg locally using 5 clients, 3 communication rounds, 1 local epoch per round, and a deterministic 20,000-row training subset.
+
+**Why:** This setup is small enough to run on CPU while still showing the central federated-learning mechanism: local client training followed by server-side weighted averaging.
+
+**Tradeoff:** It is not a production-scale federation. The purpose is an explainable academic simulation that can later be scaled if needed.
+
+### 2026-08-24 - Phase 4 IID and non-IID split
+
+**Decision:** Compare random IID client partitioning with a simple label-skew non-IID partition.
+
+**Why:** IID tests the ideal case where clients resemble the global distribution. Label-skew non-IID tests the more realistic case where some clients see mostly normal traffic while others see mostly attacks.
+
+**Tradeoff:** Label-skew by sorting labels is intentionally simple and easy to defend, but it is only one kind of non-IID distribution.

@@ -73,3 +73,17 @@ With sigma 0.25 and 128 noisy samples on 500 flows, smoothed accuracy was 0.8400
 
 **Viva defense point:**  
 This is a certificate in L2 preprocessed feature space. It should not be oversold as a guarantee over every possible raw network flow transformation.
+
+### 2026-08-24 - Phase 4: FedAvg simulation
+
+**Why we're doing it:**  
+Federated learning models the case where NIDS data is distributed across clients that cannot share raw traffic logs. This could represent organizations, departments, gateways, or edge devices. Phase 4 tests whether those clients can train a shared detector by exchanging model updates instead of raw data.
+
+**How it works technically:**  
+The server initializes a global MLP. In each communication round, every client receives the global model, trains locally on its own shard, and returns model weights. The server computes a weighted average of client weights: `w_global = sum_k (n_k / total) * w_k`, where `n_k` is the number of examples held by client `k`.
+
+**IID versus non-IID:**  
+The IID split randomly divides examples, so each client roughly resembles the full dataset. The non-IID split sorts by label before partitioning, creating clients with biased local distributions. In the run, one non-IID client had only normal flows and three clients had only attack flows.
+
+**Result interpretation:**  
+With 5 clients and 3 rounds on 20,000 training rows, IID FedAvg reached F1 0.8554 and ROC-AUC 0.9361. Non-IID label-skew FedAvg reached F1 0.8366 and ROC-AUC 0.8999. The non-IID drop is expected because local updates are less aligned when clients see different label distributions.

@@ -9,8 +9,9 @@
 - Baseline metrics have been generated at `outputs/shared-baseline/metrics.json`: accuracy 0.8640, precision 0.8093, recall 0.9852, F1 0.8886, ROC-AUC 0.9792.
 - Phase 2 attack code and full-test-set attack metrics are in place for FGSM, PGD, and constrained numeric PGD.
 - Phase 3 randomized smoothing code and initial certified accuracy metrics are in place on a deterministic 500-flow sample.
+- Phase 4 FedAvg simulation code and initial IID/non-IID results are in place.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 4: FedAvg simulation across simulated clients, unless Phase 3 needs a larger smoothing run for final tables.
+- Next session should begin Phase 5: local differential privacy on client updates and privacy-utility tradeoff.
 
 ## Phase Tracker
 
@@ -18,7 +19,7 @@
 - [x] Phase 1 - Shared pipeline: dataset choice, preprocessing, baseline classifier, baseline metrics
 - [x] Phase 2 - CI3201 attack suite: FGSM, PGD, realistic constrained attack
 - [x] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
-- [ ] Phase 4 - CI3203 FedAvg simulation across simulated clients
+- [x] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [ ] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
 - [ ] Phase 6 - Bridge experiment: certified robustness under FL and LDP
 - [ ] Phase 7 - Results consolidation and IEEE paper skeleton
@@ -55,3 +56,7 @@ Added an importable `ci3201_adversarial` package with FGSM, PGD, and constrained
 ### 2026-08-23 - Phase 3 randomized smoothing
 
 Added randomized smoothing certification utilities and a smoothing runner. Ran an initial deterministic 500-flow certification experiment with sigma 0.25, 128 noisy samples per flow, alpha 0.001, and radii 0.0, 0.05, 0.10, and 0.20. Smoothed accuracy was 0.8400, coverage was 0.9720, mean certified radius was 0.1360, and certified accuracy by radius was `{0.0: 0.8200, 0.05: 0.7640, 0.10: 0.6520, 0.20: 0.1420}`.
+
+### 2026-08-24 - Phase 4 FedAvg simulation
+
+Added `ci3203_federated` with IID partitioning, label-skew non-IID partitioning, client local training, weighted FedAvg aggregation, and tests. Ran a CPU-friendly simulation with 5 clients, 3 rounds, 1 local epoch, and a deterministic 20,000-row training subset. IID final metrics: accuracy 0.8203, precision 0.7680, recall 0.9652, F1 0.8554, ROC-AUC 0.9361. Non-IID label-skew final metrics: accuracy 0.8020, precision 0.7667, recall 0.9205, F1 0.8366, ROC-AUC 0.8999.
