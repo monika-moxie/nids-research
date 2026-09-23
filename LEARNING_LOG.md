@@ -101,3 +101,25 @@ With clip norm 10.0, IID F1 moved from 0.8554 at no noise to 0.8520, 0.8138, and
 
 **Viva defense point:**  
 This implementation is local-DP-style because noise is added before updates leave the client. However, we do not yet compute a formal epsilon privacy budget, so we should not overclaim formal DP guarantees.
+
+### 2026-09-23 - Mid-sem review framing
+
+**Why we're doing it:**  
+A review is not only a code checkpoint. It tests whether the work has a coherent research story, whether the results answer the objectives, and whether limitations are understood honestly.
+
+**How it works technically:**  
+The review packet organizes the project into a baseline, adversarial track, certified defense, federated track, privacy extension, and bridge plan. It also maps each result table to the method that produced it, so the project can be defended without jumping through source files.
+
+### 2026-09-23 - Phase 6: Bridge experiment
+
+**Why we're doing it:**  
+The adversarial and federated/privacy tracks answer different questions. The bridge experiment asks whether they can coexist: does a model still have certified robustness after non-IID federated training and local-DP-style update noise?
+
+**How it works technically:**  
+The bridge runner compares three model conditions on the same test distribution: centralized baseline, non-IID FedAvg, and non-IID FedAvg with clipped/noised updates. For each condition, it reports clean metrics on the official test set and randomized-smoothing certified accuracy on the same deterministic certification subset.
+
+**Result interpretation:**  
+The centralized baseline kept the strongest clean F1 at 0.8886. The small bridge FedAvg and FedAvg+LDP models had lower clean F1, around 0.7128 and 0.7151. At radius 0.10, certified accuracy was 0.4850 for centralized, 0.5550 for FedAvg, and 0.3500 for FedAvg+LDP. The result suggests privacy noise can reduce certified stability, but the FedAvg model also behaves differently because the bridge run is smaller than the full Phase 4 setup.
+
+**Viva defense point:**  
+This is an initial integration experiment, not the final word. The fair claim is that FL and privacy noise alter the robustness profile; larger runs should be used before making strong general conclusions.

@@ -204,3 +204,53 @@ Federated learning does not send raw data, but updates can still leak informatio
 
 **Analogy:**  
 Local privacy noise is like letting each client blur their answer sheet before handing it to the server. The server can still learn the broad pattern, but fine details are harder to recover.
+
+### 2026-09-23 - Mid-Sem Review Packet
+
+**What it does in plain language:**  
+Creates a single review document that explains the project story, completed phases, results, limitations, likely questions, and next steps.
+
+**Why it exists:**  
+The mid-sem review needs a clear narrative, not only code. This packet gives a walkable explanation of what has been built and why each part matters.
+
+**Likely teacher questions and confident answers:**
+
+1. **Is this one project or two?**  
+   It has two academic tracks: CI3201 adversarial robustness and CI3203 federated/privacy learning. The shared NIDS baseline connects them, and the bridge experiment will study their interaction.
+
+2. **What is the strongest result so far?**  
+   The project shows a clean baseline with F1 0.8886, severe degradation under PGD to F1 0.1143, certified accuracy under smoothing, useful FedAvg performance, and a clear privacy-utility drop under local update noise.
+
+3. **What remains?**  
+   The bridge experiment and final paper consolidation remain. The bridge will test whether certified robustness survives FL plus local-DP-style noise.
+
+4. **What are the main limitations?**  
+   Randomized smoothing is certified in preprocessed feature space, and the privacy mechanism does not yet compute a formal epsilon privacy budget.
+
+**Analogy:**  
+The packet is the project map for the review: it shows where we started, what evidence we collected, and what bridge still needs to be crossed.
+
+### 2026-09-23 - Phase 6: Bridge Experiment
+
+**What it does in plain language:**  
+Compares whether certified robustness remains when the model is trained centrally, with non-IID FedAvg, and with non-IID FedAvg plus local-DP-style update noise.
+
+**Why it exists:**  
+The project has two main tracks: adversarial robustness and federated/privacy learning. The bridge experiment connects them and asks whether the two goals can coexist.
+
+**Likely teacher questions and confident answers:**
+
+1. **What is the bridge question?**  
+   Whether certified robustness survives federated training and local-DP-style update noise.
+
+2. **What models were compared?**  
+   The centralized Phase 1 baseline, a non-IID FedAvg model, and a non-IID FedAvg model trained with clipped/noised client updates.
+
+3. **What did the initial bridge result show?**  
+   Centralized clean F1 was 0.8886, while the bridge FedAvg and FedAvg+LDP models were around 0.7128 and 0.7151. At radius 0.10, certified accuracy was 0.4850, 0.5550, and 0.3500 respectively.
+
+4. **Can we conclude FedAvg is more robust than centralized because radius 0.10 was higher?**  
+   Not strongly. The bridge FedAvg model is weaker and more attack-biased in this small CPU-friendly run, so certified accuracy must be interpreted together with clean F1 and coverage. The safe conclusion is that training regime and privacy noise change the robustness profile.
+
+**Analogy:**  
+The bridge experiment is a stress test where we stack conditions: first robustness, then distributed training, then privacy noise, and see which guarantees still stand.

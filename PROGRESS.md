@@ -11,8 +11,10 @@
 - Phase 3 randomized smoothing code and initial certified accuracy metrics are in place on a deterministic 500-flow sample.
 - Phase 4 FedAvg simulation code and initial IID/non-IID results are in place.
 - Phase 5 local-DP-style client update clipping/noising code and privacy-utility results are in place.
+- A mid-sem review packet has been added under `paper/MIDSEM_REVIEW.md` to summarize objectives, methods, results, limitations, and likely review questions.
+- Phase 6 bridge experiment code and initial robustness-under-FL/LDP results are in place.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 6: test whether certified robustness survives FL plus local-DP-style update noise.
+- Next session should begin Phase 7: consolidate results and build the IEEE paper skeleton.
 
 ## Phase Tracker
 
@@ -22,7 +24,7 @@
 - [x] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
 - [x] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [x] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
-- [ ] Phase 6 - Bridge experiment: certified robustness under FL and LDP
+- [x] Phase 6 - Bridge experiment: certified robustness under FL and LDP
 - [ ] Phase 7 - Results consolidation and IEEE paper skeleton
 - [ ] Phase 8 - Deployment Intelligence Layer: practical-applicability demo on top of FastAPI deployment, clearly separated from the core research contribution
 
@@ -65,3 +67,11 @@ Added `ci3203_federated` with IID partitioning, label-skew non-IID partitioning,
 ### 2026-08-25 - Phase 5 local differential privacy
 
 Added local-DP-style client update clipping and Gaussian noise before server aggregation. Ran a calibrated privacy-utility tradeoff with 5 clients, 3 rounds, 1 local epoch, 20,000 training rows, clip norm 10.0, and noise multipliers 0.0, 0.001, 0.005, and 0.01. IID F1 changed from 0.8554 to 0.8520, 0.8138, and 0.8036 as noise increased. Non-IID F1 changed from 0.8366 to 0.8241, 0.7601, and 0.7491.
+
+### 2026-09-23 - Mid-sem review preparation
+
+Added `paper/MIDSEM_REVIEW.md` as a review-ready packet covering the project motivation, phase-wise methods, result tables, limitations, likely teacher questions, and suggested slide flow.
+
+### 2026-09-23 - Phase 6 bridge experiment
+
+Added `bridge_experiment` with a runner that compares centralized baseline, non-IID FedAvg, and non-IID FedAvg plus local-DP-style update noise. The bridge run used 10,000 training rows, 5 clients, 2 federated rounds, 200 certification samples, sigma 0.25, 64 noisy samples per flow, clip norm 10.0, and noise multiplier 0.005. Clean F1 values were centralized 0.8886, FedAvg 0.7128, and FedAvg+LDP 0.7151. Certified accuracy at radius 0.10 was centralized 0.4850, FedAvg 0.5550, and FedAvg+LDP 0.3500. The bridge suggests FL/LDP changes the robustness profile, but larger bridge runs are needed before making final claims.
