@@ -87,3 +87,17 @@ The IID split randomly divides examples, so each client roughly resembles the fu
 
 **Result interpretation:**  
 With 5 clients and 3 rounds on 20,000 training rows, IID FedAvg reached F1 0.8554 and ROC-AUC 0.9361. Non-IID label-skew FedAvg reached F1 0.8366 and ROC-AUC 0.8999. The non-IID drop is expected because local updates are less aligned when clients see different label distributions.
+
+### 2026-08-25 - Phase 5: Local differential privacy on updates
+
+**Why we're doing it:**  
+FedAvg avoids sharing raw traffic logs, but client model updates can still reveal information about local data. Phase 5 adds client-side update perturbation to study how privacy protection affects model utility.
+
+**How it works technically:**  
+Each client trains locally and produces a local model. The client update is `local_weights - global_weights`. We clip the whole update to a maximum L2 norm, then add Gaussian noise with standard deviation `clip_norm * noise_multiplier`. The server averages these private updates instead of raw local weights.
+
+**Privacy-utility tradeoff:**  
+With clip norm 10.0, IID F1 moved from 0.8554 at no noise to 0.8520, 0.8138, and 0.8036 as noise multipliers increased to 0.001, 0.005, and 0.01. Non-IID F1 moved from 0.8366 to 0.8241, 0.7601, and 0.7491. This shows the expected pattern: stronger perturbation reduces utility, especially under non-IID data.
+
+**Viva defense point:**  
+This implementation is local-DP-style because noise is added before updates leave the client. However, we do not yet compute a formal epsilon privacy budget, so we should not overclaim formal DP guarantees.

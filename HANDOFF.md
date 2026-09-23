@@ -179,3 +179,28 @@ The CI3203 track studies federated learning and privacy. FedAvg is the baseline 
 
 **Analogy:**  
 FedAvg is like five students solving the same problem set separately, then combining their answer sheets into one shared solution, giving more weight to students who saw more examples.
+
+### 2026-08-25 - Phase 5: Local Differential Privacy
+
+**What it does in plain language:**  
+Adds privacy noise to each client's model update before the server aggregates it.
+
+**Why it exists:**  
+Federated learning does not send raw data, but updates can still leak information. Local-DP-style perturbation makes the update less revealing before it leaves the client.
+
+**Likely teacher questions and confident answers:**
+
+1. **Why is privacy needed if federated learning already keeps data local?**  
+   Because model updates are derived from local data. They can still leak patterns about a client's traffic distribution.
+
+2. **What does clipping do?**  
+   Clipping limits the L2 norm of a client update. This bounds how much one client can influence the global model and sets the scale for noise.
+
+3. **What does the noise multiplier control?**  
+   It controls Gaussian noise magnitude. Higher values hide more update detail but usually reduce model performance.
+
+4. **What were the results?**  
+   With clip norm 10.0, IID F1 dropped from 0.8554 at no noise to 0.8036 at noise 0.01. Non-IID F1 dropped from 0.8366 to 0.7491. Non-IID is more fragile under privacy noise.
+
+**Analogy:**  
+Local privacy noise is like letting each client blur their answer sheet before handing it to the server. The server can still learn the broad pattern, but fine details are harder to recover.

@@ -73,3 +73,57 @@ Using 5 clients, 3 communication rounds, 1 local epoch per round, and a determin
 | Non-IID label skew | 0.8020 | 0.8366 | 0.8999 |
 
 Interpretation: both settings learn useful detectors, but non-IID label skew performs worse because clients train on biased local views of the traffic distribution.
+
+## Phase 5 Local Differential Privacy
+
+Phase 5 adds privacy noise to client updates before the server sees them.
+
+### What It Does
+
+Each client still trains locally, but instead of sending the raw model update directly, it sends a clipped and noised update:
+
+```text
+update = local_weights - global_weights
+clipped_update = clip_to_l2_norm(update, clip_norm)
+private_update = clipped_update + Gaussian_noise
+```
+
+The server averages these private updates.
+
+### Why It Exists
+
+Federated learning keeps raw traffic records local, but model updates can still leak information about a client's data distribution. Local differential privacy reduces that risk because the update is perturbed before it leaves the client.
+
+### How It Works Technically
+
+Clipping limits how much any one client update can influence the global model. Noise then hides fine-grained information in the update. The experiment varies the `noise_multiplier` to show the privacy-utility tradeoff:
+
+- low noise: better model utility, weaker privacy protection
+- high noise: stronger privacy protection, worse model utility
+
+This implementation demonstrates local-DP-style update perturbation but does not compute a formal privacy budget epsilon.
+
+### Run
+
+```powershell
+.\.venv\Scripts\python.exe -m ci3203_federated.run_ldp
+```
+
+Output:
+
+```text
+outputs/ci3203-ldp/ldp_metrics.json
+```
+
+### Initial Privacy-Utility Results
+
+Using 5 clients, 3 communication rounds, 1 local epoch per round, a 20,000-row training subset, and clip norm `10.0`:
+
+| Noise multiplier | IID F1 | Non-IID F1 |
+| ---: | ---: | ---: |
+| 0.000 | 0.8554 | 0.8366 |
+| 0.001 | 0.8520 | 0.8241 |
+| 0.005 | 0.8138 | 0.7601 |
+| 0.010 | 0.8036 | 0.7491 |
+
+Interpretation: increasing noise generally reduces detection utility. The non-IID setting degrades more sharply because biased client updates are already harder to combine, and privacy noise makes the signal even less stable.

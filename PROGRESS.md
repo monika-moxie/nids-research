@@ -10,8 +10,9 @@
 - Phase 2 attack code and full-test-set attack metrics are in place for FGSM, PGD, and constrained numeric PGD.
 - Phase 3 randomized smoothing code and initial certified accuracy metrics are in place on a deterministic 500-flow sample.
 - Phase 4 FedAvg simulation code and initial IID/non-IID results are in place.
+- Phase 5 local-DP-style client update clipping/noising code and privacy-utility results are in place.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 5: local differential privacy on client updates and privacy-utility tradeoff.
+- Next session should begin Phase 6: test whether certified robustness survives FL plus local-DP-style update noise.
 
 ## Phase Tracker
 
@@ -20,7 +21,7 @@
 - [x] Phase 2 - CI3201 attack suite: FGSM, PGD, realistic constrained attack
 - [x] Phase 3 - CI3201 certified defense: randomized smoothing and certified accuracy
 - [x] Phase 4 - CI3203 FedAvg simulation across simulated clients
-- [ ] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
+- [x] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
 - [ ] Phase 6 - Bridge experiment: certified robustness under FL and LDP
 - [ ] Phase 7 - Results consolidation and IEEE paper skeleton
 - [ ] Phase 8 - Deployment Intelligence Layer: practical-applicability demo on top of FastAPI deployment, clearly separated from the core research contribution
@@ -60,3 +61,7 @@ Added randomized smoothing certification utilities and a smoothing runner. Ran a
 ### 2026-08-24 - Phase 4 FedAvg simulation
 
 Added `ci3203_federated` with IID partitioning, label-skew non-IID partitioning, client local training, weighted FedAvg aggregation, and tests. Ran a CPU-friendly simulation with 5 clients, 3 rounds, 1 local epoch, and a deterministic 20,000-row training subset. IID final metrics: accuracy 0.8203, precision 0.7680, recall 0.9652, F1 0.8554, ROC-AUC 0.9361. Non-IID label-skew final metrics: accuracy 0.8020, precision 0.7667, recall 0.9205, F1 0.8366, ROC-AUC 0.8999.
+
+### 2026-08-25 - Phase 5 local differential privacy
+
+Added local-DP-style client update clipping and Gaussian noise before server aggregation. Ran a calibrated privacy-utility tradeoff with 5 clients, 3 rounds, 1 local epoch, 20,000 training rows, clip norm 10.0, and noise multipliers 0.0, 0.001, 0.005, and 0.01. IID F1 changed from 0.8554 to 0.8520, 0.8138, and 0.8036 as noise increased. Non-IID F1 changed from 0.8366 to 0.8241, 0.7601, and 0.7491.

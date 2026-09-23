@@ -105,3 +105,19 @@
 **Why:** IID tests the ideal case where clients resemble the global distribution. Label-skew non-IID tests the more realistic case where some clients see mostly normal traffic while others see mostly attacks.
 
 **Tradeoff:** Label-skew by sorting labels is intentionally simple and easy to defend, but it is only one kind of non-IID distribution.
+
+### 2026-08-25 - Phase 5 local-DP-style mechanism
+
+**Decision:** Implement client-side update clipping followed by Gaussian noise before server aggregation.
+
+**Why:** Federated learning keeps raw data local, but model updates can still leak information. Clipping limits the maximum influence of one client update, and noise hides fine-grained update details before the server receives them.
+
+**Tradeoff:** This demonstrates the privacy-utility tradeoff but does not compute a formal differential privacy epsilon. We should describe it as local-DP-style update perturbation unless a formal accountant is added later.
+
+### 2026-08-25 - Phase 5 calibrated noise levels
+
+**Decision:** Use clip norm 10.0 with noise multipliers 0.0, 0.001, 0.005, and 0.01 for the reported Phase 5 curve.
+
+**Why:** Larger noise multipliers caused numerical instability in the small MLP, while aggressive clipping with clip norm 1.0 overly suppressed useful updates. The calibrated values produce a readable utility curve.
+
+**Tradeoff:** The noise values are small, so the result is best framed as a practical tradeoff demonstration rather than a strong privacy claim.
