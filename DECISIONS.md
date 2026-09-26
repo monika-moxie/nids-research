@@ -129,3 +129,19 @@
 **Why:** The experiments use different sample sizes and training budgets. A table that omits these details could imply unfair comparisons, particularly for the smaller bridge run. The project also needs to avoid overstating a preprocessed-space certificate as raw-flow robustness or noisy updates as a formal local-DP guarantee.
 
 **Tradeoff:** The resulting paper language is more cautious, but it is scientifically stronger and easier to defend in a viva.
+
+### 2026-09-26 - Phase 7 reproducible figures
+
+**Decision:** Generate paper figures programmatically from saved JSON metrics rather than manually editing chart values.
+
+**Why:** Reproducible figures preserve traceability from a reported visual back to the exact experiment output. The bridge figure deliberately places clean F1 beside certified accuracy so a certificate cannot be misread as a complete model-quality score.
+
+**Tradeoff:** This adds Matplotlib as a dependency and a small maintenance script, but it makes chart regeneration and review substantially more reliable.
+
+### 2026-09-26 - Phase 7 research positioning
+
+**Decision:** Frame the work as a reproducible NIDS integration and trade-off study, not as a claim to invent adversarial attacks, randomized smoothing, FedAvg, or differential privacy.
+
+**Why:** These are established methods with identifiable primary sources. The defensible contribution is the shared experimental pipeline, constrained tabular attack comparison, scoped certificates, federated/privacy utility analysis, and initial bridge evaluation.
+
+**Tradeoff:** This narrows novelty language, but it prevents unsupported "first" claims and makes the final paper more credible.

@@ -4,10 +4,10 @@
 
 ### 2026-08-20 - Phase 0: Repository Scaffold
 
-**What it does in plain language:**  
+**What it does in plain language:**
 Creates the project map. Each folder has a clear research responsibility so future code, results, and explanation packets have a stable home.
 
-**Why it exists:**  
+**Why it exists:**
 The project combines NIDS classification, adversarial ML, certified robustness, federated learning, local differential privacy, and a bridge experiment. Without a scaffold, the work can become hard to explain and harder to defend.
 
 **Likely teacher questions and confident answers:**
@@ -279,3 +279,53 @@ Metrics in separate JSON files are difficult to compare and easy to misrepresent
 
 **Analogy:**  
 Phase 7 is the evidence board in a lab: every result is pinned beside the experiment that produced it, so nobody mistakes one result for evidence of a different claim.
+
+### 2026-09-26 - Phase 7: Reproducible Figures
+
+**What it does in plain language:**
+Creates four paper-ready charts from saved results: attack impact, certification by radius, privacy versus utility, and bridge utility versus certification.
+
+**Why it exists:**
+Charts let a reviewer see the project trade-offs quickly, while programmatic generation prevents manual transcription errors.
+
+**Likely teacher questions and confident answers:**
+
+1. **Are these figures new experiments?**
+   No. They are visual summaries of the saved experiment outputs; the runner does not retrain models or alter metrics.
+
+2. **Why show clean F1 next to certified accuracy in the bridge plot?**
+   A certificate measures local stability, while F1 measures detection utility. Showing both prevents us from presenting a high certificate value from a weak classifier as overall robustness.
+
+3. **Can another teammate regenerate the same figures?**
+   Yes. After installing `requirements.txt`, they run `python paper/generate_figures.py`; the script reads the committed experiment-result paths and writes the same figure files.
+
+4. **Why use a line chart for privacy noise?**
+   Noise multiplier is an ordered continuous control. A line makes the utility decline and the larger non-IID sensitivity easier to inspect than isolated bars.
+
+**Analogy:**
+The figure generator is like a lab instrument that redraws the graph directly from the measurement sheet, rather than asking someone to copy each point by hand.
+
+### 2026-09-26 - Phase 7: Related Work and Research Positioning
+
+**What it does in plain language:**
+Connects each project method to published research and states the project's actual contribution without pretending that standard algorithms were invented here.
+
+**Why it exists:**
+An academic paper needs to establish what the field already knows before it can explain what its own experiments add. It also protects the project from unsupported novelty claims.
+
+**Likely teacher questions and confident answers:**
+
+1. **What exactly is your contribution if FGSM, PGD, FedAvg, and smoothing already exist?**
+   We contribute a modular, reproducible NIDS study that evaluates these concerns in one controlled pipeline and reports clean utility alongside robustness and privacy trade-offs.
+
+2. **Do you claim formal local differential privacy?**
+   No. We use local-DP-style update clipping and noise. A formal claim would require a defined adjacency relation, calibrated epsilon and delta, and accounting across rounds.
+
+3. **Why is constrained numeric PGD important?**
+   Standard feature-space PGD can make categorical one-hot variables invalid. Numeric-only PGD is a more defensible tabular baseline, while still being an approximation rather than a raw-traffic generator.
+
+4. **What is the precise bridge research question?**
+   Under our stated non-IID federated and noised-update settings, how do clean detection utility and randomized-smoothing certificate metrics change together?
+
+**Analogy:**
+The literature review is the map legend: it shows which roads were built by earlier researchers and makes clear which route this project is actually travelling.

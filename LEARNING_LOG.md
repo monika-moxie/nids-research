@@ -4,10 +4,10 @@
 
 ### 2026-08-20 - Phase 0: Why scaffolding matters
 
-**Why we're doing it:**  
+**Why we're doing it:**
 A research codebase is not only a place to store code. It is also evidence of how the experiment was designed. A clear scaffold helps us explain what each component is responsible for and why comparisons are fair.
 
-**How it works technically:**  
+**How it works technically:**
 The scaffold uses top-level directories as module boundaries. Future phases will add scripts, configs, notebooks, tests, and result artifacts inside the folder that matches the research question being answered.
 
 ### 2026-08-20 - Phase 1: Shared baseline pipeline
@@ -18,7 +18,7 @@ The baseline is the scientific control. Attacks, defenses, federated training, a
 **How it works technically:**  
 UNSW-NB15 is treated as a binary classification problem using the `label` column. The preprocessor fits only on training data to avoid test leakage. Numeric columns use median imputation plus standard scaling. Categorical columns use most-frequent imputation plus one-hot encoding with unknown test categories ignored. The baseline classifier is a multilayer perceptron trained with binary cross-entropy on logits.
 
-**Viva defense point:**  
+**Viva defense point:**
 Dropping `attack_cat` is necessary because it is not a network measurement; it is already a label-like explanation of the attack type. A model trained with it would be learning from the answer key.
 
 ### 2026-08-20 - Phase 1: Environment and data folders
@@ -134,3 +134,25 @@ Research code becomes a research contribution only when results can be traced to
 
 **Viva defense point:**  
 Certified accuracy and clean F1 measure different properties. A model with a larger certificate value but much lower clean utility is not automatically the better detector. We therefore report both values and preserve the different bridge training budget in the table caption and methods.
+
+### 2026-09-26 - Phase 7: Reproducible figures
+
+**Why we're doing it:**
+Visuals make the central trade-offs immediately visible to a reviewer: vulnerability under attacks, declining certified accuracy as robustness demand increases, utility loss under update noise, and the need to read bridge certificate values together with clean performance.
+
+**How it works technically:**
+`paper/generate_figures.py` loads JSON artifacts from `outputs/`, extracts the published F1 and certified-accuracy values, and saves four PNGs in `paper/figures/`. It uses Matplotlib's non-interactive `Agg` backend, so the command works on a machine without a graphical Python window.
+
+**Viva defense point:**
+The charts do not generate new experimental evidence. They are a reproducible presentation of already saved metrics; rerunning the script after a result changes prevents transcription mistakes.
+
+### 2026-09-26 - Phase 7: Related work and research gap
+
+**Why we're doing it:**
+The literature review explains why the project matters beyond a collection of scripts. It shows what previous researchers established and identifies the narrower question our pipeline investigates: how clean utility, adversarial vulnerability, certification, federation, and update noise interact in one NIDS setting.
+
+**How it works technically:**
+`paper/RELATED_WORK.md` uses numbered IEEE-style citations and maps them to structured records in `paper/references.bib`. The draft groups sources by dataset, adversarial robustness, certified robustness, federated learning, update privacy, and federated NIDS. This organization lets each paper section cite the source that supports its specific technical claim.
+
+**Viva defense point:**
+Our contribution is not a new theorem or a new federated algorithm. It is a controlled integration study with explicit limits: preprocessed feature-space attacks/certificates, a CPU-scale federation, and local-DP-style noise without a formal privacy accountant.

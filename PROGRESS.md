@@ -15,8 +15,10 @@
 - Phase 6 bridge experiment code and initial robustness-under-FL/LDP results are in place.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
 - Phase 7 results consolidation and an IEEE-style paper skeleton are now in place. They report the completed experimental conditions, tables, scoped claims, limitations, and future-validation priorities.
-- Phase 7 remains open for final figures, primary-source literature review, repeated-seed validation, and conversion into the institution's required IEEE template.
-- Next session should continue Phase 7 with final figures and literature-backed related-work writing, or move to Phase 8 only after Phase 7 is signed off.
+- Phase 7 now includes four reproducible paper figures generated directly from saved metrics: attack F1, certified accuracy by radius, privacy-utility trade-off, and bridge clean-versus-certified comparison.
+- Phase 7 now has a literature-backed related-work draft and matching BibTeX records covering the dataset, attacks, certification, FedAvg, differential privacy, and federated NIDS.
+- Phase 7 remains open for repeated-seed validation and conversion into the institution's required IEEE template.
+- Next session should continue Phase 7 with a reproducibility/validation plan, or move to Phase 8 only after Phase 7 is signed off.
 
 ## Phase Tracker
 
@@ -81,3 +83,11 @@ Added `bridge_experiment` with a runner that compares centralized baseline, non-
 ### 2026-09-26 - Phase 7 results consolidation
 
 Added `paper/RESULTS_CONSOLIDATION.md` and `paper/IEEE_PAPER_SKELETON.md`. The result pack records tables together with their data split, training budget, threat model, and certificate scope. The paper skeleton turns the completed experiments into a conservative IEEE-style narrative with objectives, methods, results, limitations, and future work. Phase 7 is partially complete: figures, verified related work, and repeated-seed validation remain.
+
+### 2026-09-26 - Phase 7 reproducible figures
+
+Added `paper/generate_figures.py`, a figure usage note, and four generated PNG figures. The script reads the existing JSON result artifacts and plots attack F1, certified accuracy by radius, the privacy-utility curve, and bridge clean F1 beside certified accuracy at radius 0.10. Matplotlib is now declared in `requirements.txt`. Phase 7 still needs verified related work, repeated-seed validation, and final template conversion.
+
+### 2026-09-26 - Phase 7 related work
+
+Added `paper/RELATED_WORK.md` and `paper/references.bib`. The review positions the project as an integration and trade-off study rather than a claim to invent standard methods. It cites the UNSW-NB15 dataset, FGSM, PGD, randomized smoothing, FedAvg, differential privacy, and federated NIDS literature. Phase 7 now needs repeated-seed validation and final IEEE-template conversion.

@@ -16,3 +16,13 @@ The implementation should produce explainable results that can be written into a
 - Experiment tables
 - Figures
 - Limitations and future work
+
+## Current Artifacts
+
+- `RESULTS_CONSOLIDATION.md`: reported metrics with their experimental scope.
+- `IEEE_PAPER_SKELETON.md`: paper-ready structure and conservative claims.
+- `generate_figures.py`: reproducibly creates paper figures from saved JSON
+  experiment metrics.
+- `figures/`: generated PNG figures and usage notes.
+- `RELATED_WORK.md` and `references.bib`: literature-backed related-work draft
+  and matching reference records.

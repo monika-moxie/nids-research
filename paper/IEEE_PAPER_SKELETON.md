@@ -70,12 +70,12 @@ State these conservatively in the final paper:
 
 ## II. Related Work
 
-Use this section only after adding and verifying primary sources. Organize it
-into four short subsections: adversarial attacks on tabular/NIDS models,
-certified robustness and randomized smoothing, federated NIDS under non-IID
-data, and differential privacy for federated learning. End the section by
-stating precisely that this work integrates these concerns in one pipeline; do
-not claim it is the first work to do so without a systematic literature search.
+Use `paper/RELATED_WORK.md` as the verified first draft and `references.bib`
+for citations. Organize the final section into benchmark NIDS data,
+adversarial evaluation and certified robustness, federated learning and update
+privacy, and federated NIDS. End by stating precisely that this work integrates
+these concerns in one pipeline; do not claim it is the first work to do so
+without a systematic literature search.
 
 ## III. Materials and Methods
 
