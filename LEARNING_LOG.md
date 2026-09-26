@@ -123,3 +123,14 @@ The centralized baseline kept the strongest clean F1 at 0.8886. The small bridge
 
 **Viva defense point:**  
 This is an initial integration experiment, not the final word. The fair claim is that FL and privacy noise alter the robustness profile; larger runs should be used before making strong general conclusions.
+
+### 2026-09-26 - Phase 7: Results consolidation and paper skeleton
+
+**Why we're doing it:**  
+Research code becomes a research contribution only when results can be traced to a method, compared fairly, and interpreted within their limits. Phase 7 turns separate scripts and JSON outputs into a coherent argument rather than a collection of metrics.
+
+**How it works technically:**  
+`paper/RESULTS_CONSOLIDATION.md` stores every reported table next to its data subset, model/training configuration, attack or noise setting, and interpretation. `paper/IEEE_PAPER_SKELETON.md` maps those tables into standard paper sections: problem, gap, methods, results, discussion, limitations, and conclusion.
+
+**Viva defense point:**  
+Certified accuracy and clean F1 measure different properties. A model with a larger certificate value but much lower clean utility is not automatically the better detector. We therefore report both values and preserve the different bridge training budget in the table caption and methods.

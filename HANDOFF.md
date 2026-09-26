@@ -254,3 +254,28 @@ The project has two main tracks: adversarial robustness and federated/privacy le
 
 **Analogy:**  
 The bridge experiment is a stress test where we stack conditions: first robustness, then distributed training, then privacy noise, and see which guarantees still stand.
+
+### 2026-09-26 - Phase 7: Results Consolidation and IEEE Paper Skeleton
+
+**What it does in plain language:**  
+Turns the completed experiments into paper-ready tables and a walkable IEEE-style research story. It records what was measured, under which conditions, what can be concluded, and what cannot yet be claimed.
+
+**Why it exists:**  
+Metrics in separate JSON files are difficult to compare and easy to misrepresent. A research paper must connect each result to its setup and distinguish empirical evidence from overclaiming.
+
+**Likely teacher questions and confident answers:**
+
+1. **Why not directly compare every number in the project?**  
+   Some runs use different training budgets and certification sample sizes. We compare them descriptively while preserving those differences; only matched settings support a strong head-to-head claim.
+
+2. **Does the bridge prove federated learning is more robust than centralized training?**  
+   No. The non-IID FedAvg bridge model has much lower clean F1 and different training resources. The supported conclusion is that the training regime changes the robustness profile.
+
+3. **Can you call Phase 5 local differential privacy?**  
+   We call it local-DP-style update perturbation. The mechanism clips and noises updates locally, but a formal epsilon-delta accountant is required for a quantified DP claim.
+
+4. **What is the key limitation of the certificate?**  
+   It is an L2 guarantee in the model's preprocessed feature space, not a guarantee that every raw network flow within that distance is physically valid.
+
+**Analogy:**  
+Phase 7 is the evidence board in a lab: every result is pinned beside the experiment that produced it, so nobody mistakes one result for evidence of a different claim.

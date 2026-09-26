@@ -121,3 +121,11 @@
 **Why:** Larger noise multipliers caused numerical instability in the small MLP, while aggressive clipping with clip norm 1.0 overly suppressed useful updates. The calibrated values produce a readable utility curve.
 
 **Tradeoff:** The noise values are small, so the result is best framed as a practical tradeoff demonstration rather than a strong privacy claim.
+
+### 2026-09-26 - Phase 7 reporting boundaries
+
+**Decision:** Consolidate results into paper tables while preserving each experiment's evaluation scope and explicitly separating observations from claims.
+
+**Why:** The experiments use different sample sizes and training budgets. A table that omits these details could imply unfair comparisons, particularly for the smaller bridge run. The project also needs to avoid overstating a preprocessed-space certificate as raw-flow robustness or noisy updates as a formal local-DP guarantee.
+
+**Tradeoff:** The resulting paper language is more cautious, but it is scientifically stronger and easier to defend in a viva.

@@ -14,7 +14,9 @@
 - A mid-sem review packet has been added under `paper/MIDSEM_REVIEW.md` to summarize objectives, methods, results, limitations, and likely review questions.
 - Phase 6 bridge experiment code and initial robustness-under-FL/LDP results are in place.
 - The project is organized as a two-part academic NIDS research project with a later bridge experiment.
-- Next session should begin Phase 7: consolidate results and build the IEEE paper skeleton.
+- Phase 7 results consolidation and an IEEE-style paper skeleton are now in place. They report the completed experimental conditions, tables, scoped claims, limitations, and future-validation priorities.
+- Phase 7 remains open for final figures, primary-source literature review, repeated-seed validation, and conversion into the institution's required IEEE template.
+- Next session should continue Phase 7 with final figures and literature-backed related-work writing, or move to Phase 8 only after Phase 7 is signed off.
 
 ## Phase Tracker
 
@@ -25,7 +27,7 @@
 - [x] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [x] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
 - [x] Phase 6 - Bridge experiment: certified robustness under FL and LDP
-- [ ] Phase 7 - Results consolidation and IEEE paper skeleton
+- [~] Phase 7 - Results consolidation and IEEE paper skeleton (skeleton and tables complete; figures and literature-backed finalization remain)
 - [ ] Phase 8 - Deployment Intelligence Layer: practical-applicability demo on top of FastAPI deployment, clearly separated from the core research contribution
 
 ## Session Notes
@@ -75,3 +77,7 @@ Added `paper/MIDSEM_REVIEW.md` as a review-ready packet covering the project mot
 ### 2026-09-23 - Phase 6 bridge experiment
 
 Added `bridge_experiment` with a runner that compares centralized baseline, non-IID FedAvg, and non-IID FedAvg plus local-DP-style update noise. The bridge run used 10,000 training rows, 5 clients, 2 federated rounds, 200 certification samples, sigma 0.25, 64 noisy samples per flow, clip norm 10.0, and noise multiplier 0.005. Clean F1 values were centralized 0.8886, FedAvg 0.7128, and FedAvg+LDP 0.7151. Certified accuracy at radius 0.10 was centralized 0.4850, FedAvg 0.5550, and FedAvg+LDP 0.3500. The bridge suggests FL/LDP changes the robustness profile, but larger bridge runs are needed before making final claims.
+
+### 2026-09-26 - Phase 7 results consolidation
+
+Added `paper/RESULTS_CONSOLIDATION.md` and `paper/IEEE_PAPER_SKELETON.md`. The result pack records tables together with their data split, training budget, threat model, and certificate scope. The paper skeleton turns the completed experiments into a conservative IEEE-style narrative with objectives, methods, results, limitations, and future work. Phase 7 is partially complete: figures, verified related work, and repeated-seed validation remain.
