@@ -145,3 +145,35 @@
 **Why:** These are established methods with identifiable primary sources. The defensible contribution is the shared experimental pipeline, constrained tabular attack comparison, scoped certificates, federated/privacy utility analysis, and initial bridge evaluation.
 
 **Tradeoff:** This narrows novelty language, but it prevents unsupported "first" claims and makes the final paper more credible.
+
+### 2026-09-26 - Phase 7 repeated-seed reporting
+
+**Decision:** Repeat the key FedAvg, local-update-noise, and bridge experiments across seeds 42, 1337, and 2026, and retain numerically failed high-noise runs in the reported evidence.
+
+**Why:** A single seed cannot distinguish a stable effect from a random outcome. Excluding a failed run would systematically overstate the reliability of a privacy-noise setting.
+
+**Tradeoff:** Three seeds are a CPU-feasible stability check rather than a large statistical study. The high-noise `0.01` result has only two successful runs and must be described as unstable.
+
+### 2026-09-26 - Phase 8 artifact-backed API
+
+**Decision:** Build the deployment API around the exact saved Phase 1 preprocessor and MLP artifacts, and reject missing or unknown raw feature fields.
+
+**Why:** A practical demo must make the same prediction pipeline as the research baseline. Silent field mismatch would create results that are neither reproducible nor defensible.
+
+**Tradeoff:** A client must supply all 42 required raw fields, which is stricter than a toy form, but the frontend can obtain this schema from the metadata endpoint and construct valid requests.
+
+### 2026-10-15 - Phase 8 bounded intelligence workflow
+
+**Decision:** Use LIME as a local explanation tool and a deterministic escalate/suppress policy rather than an unconstrained language-model agent.
+
+**Why:** A practical analyst demonstration needs traceable recommendations. The policy can point directly to model probability and explanation evidence, while the incident report remains a human-review draft.
+
+**Tradeoff:** The workflow is less open-ended than a conversational autonomous agent, but it is safer, reproducible, and defensible for a cybersecurity setting.
+
+### 2026-10-16 - Phase 8 dashboard state behavior
+
+**Decision:** Explicitly set the empty analysis state to `display: none` when it has the HTML `hidden` attribute.
+
+**Why:** The component's grid display styling overrode the browser's default hidden behavior, causing the empty state to remain visible after a valid result was available.
+
+**Tradeoff:** None for application behavior; this restores the intended one-state-at-a-time analyst workflow.

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NIDS Analyst Console</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><i data-lucide="shield-check"></i><span>NIDS Analyst Console</span><small>Phase 8 demonstrator</small></div>
+    <div class="connection"><span class="status-dot"></span><span id="api-status">API connected</span></div>
+  </header>
+
+  <main>
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">Intrusion analysis</p>
+        <h1>Flow Intelligence</h1>
+        <p class="subtitle">Model decision, local explanation, certificate, and review-ready incident draft.</p>
+      </div>
+      <div class="scope-note"><i data-lucide="info"></i><span>Certificates and explanations use preprocessed feature space.</span></div>
+    </section>
+
+    <section class="workspace">
+      <aside class="input-panel">
+        <div class="panel-heading"><div><p class="eyebrow">Input</p><h2>Network flow</h2></div><i data-lucide="network"></i></div>
+        <div class="input-actions">
+          <button id="load-demo" class="button secondary" title="Load a local UNSW-NB15 test flow"><i data-lucide="database"></i>Load demo flow</button>
+          <button id="analyze" class="button primary" title="Run model, certificate, explanation, and decision workflow"><i data-lucide="scan-search"></i>Analyze flow</button>
+        </div>
+        <label for="flow-json">Raw feature JSON</label>
+        <textarea id="flow-json" spellcheck="false" aria-label="Raw feature JSON"></textarea>
+        <p class="input-note" id="schema-note">Loading required model fields...</p>
+      </aside>
+
+      <section class="results-area" aria-live="polite">
+        <div id="empty-state" class="empty-state">
+          <i data-lucide="radar"></i>
+          <h2>Awaiting flow analysis</h2>
+          <p>Load the local demonstration flow or paste a complete valid flow record.</p>
+        </div>
+
+        <div id="results" hidden>
+          <div class="result-topline">
+            <div><p class="eyebrow">Analyst recommendation</p><h2 id="action-title">—</h2><p id="decision-reason">—</p></div>
+            <span id="severity-badge" class="severity">—</span>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric"><p>Attack probability</p><strong id="attack-probability">—</strong><span>Threshold: 50%</span></article>
+            <article class="metric"><p>Model label</p><strong id="model-label">—</strong><span>Clean prediction</span></article>
+            <article class="metric"><p>Certified radius</p><strong id="certified-radius">—</strong><span id="certificate-status">—</span></article>
+          </div>
+
+          <div class="two-column">
+            <article class="surface">
+              <div class="surface-heading"><div><p class="eyebrow">Local evidence</p><h3>LIME feature contributions</h3></div><i data-lucide="chart-no-axes-combined"></i></div>
+              <div id="explanation-list" class="feature-list"></div>
+            </article>
+            <article class="surface">
+              <div class="surface-heading"><div><p class="eyebrow">Five-second read</p><h3>Analyst summary</h3></div><i data-lucide="message-square-text"></i></div>
+              <p id="plain-summary" class="summary-copy">—</p>
+            </article>
+          </div>
+
+          <article class="surface incident-report">
+            <div class="surface-heading"><div><p class="eyebrow">Draft report</p><h3 id="report-id">Incident report</h3></div><button id="copy-report" class="icon-button" title="Copy incident report"><i data-lucide="copy"></i></button></div>
+            <div class="report-grid">
+              <div><span>Status</span><strong id="report-status">—</strong></div>
+              <div><span>Recommended step</span><strong id="next-step">—</strong></div>
+              <div class="full"><span>Limitation</span><strong id="report-limitation">—</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+  <div id="toast" role="status"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

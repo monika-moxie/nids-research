@@ -135,6 +135,7 @@ Use the six tables in `RESULTS_CONSOLIDATION.md`:
 4. IID versus non-IID FedAvg.
 5. Local-DP-style privacy-utility trade-off.
 6. Bridge clean utility and certified robustness.
+7. Repeated-seed validation of federated, private, and bridge results.
 
 Suggested result narrative:
 
@@ -146,6 +147,8 @@ Suggested result narrative:
 - Non-IID data and update noise both reduce federated utility.
 - In the bridge, clean utility and certificate values must be interpreted
   jointly; certified accuracy alone cannot establish the best model.
+- Use mean plus sample standard deviation from the repeated-seed validation
+  for federated conclusions, and report instability at the highest noise level.
 
 ## V. Discussion
 

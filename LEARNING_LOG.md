@@ -156,3 +156,47 @@ The literature review explains why the project matters beyond a collection of sc
 
 **Viva defense point:**
 Our contribution is not a new theorem or a new federated algorithm. It is a controlled integration study with explicit limits: preprocessed feature-space attacks/certificates, a CPU-scale federation, and local-DP-style noise without a formal privacy accountant.
+
+### 2026-09-26 - Phase 7: Repeated-seed validation
+
+**Why we're doing it:**
+Single-run metrics can reflect random model initialization, sampled training rows, client partitions, update noise, or smoothing samples. Repeating experiments across seeds tests whether the paper's qualitative claims remain visible when those random sources change.
+
+**How it works technically:**
+`paper/run_repeated_seed_validation.py` calls the existing runners once for each of seeds 42, 1337, and 2026. It preserves the original experimental settings, saves each raw JSON result, and reports arithmetic means plus sample standard deviations. The summarizer also counts failed runs and saves their errors instead of treating them as missing data.
+
+**Result interpretation:**
+IID FedAvg remained stronger than non-IID FedAvg in mean F1, and moderate noise continued to reduce F1 more under non-IID data. At noise multiplier 0.01, one seed generated NaN predictions in both distributions. The bridge's private condition had lower mean certified accuracy at radius 0.10 and greater variation than the non-private FedAvg condition.
+
+**Viva defense point:**
+Averaging only successful runs at the unstable noise level would be selection bias. We report `2/3` successful runs and treat numerical instability as an operational limitation of that configuration.
+
+### 2026-09-26 - Phase 8: FastAPI backend foundation
+
+**Why we're doing it:**
+The deployment layer demonstrates practical applicability without changing the research contribution. A backend is needed before a dashboard because it gives the frontend one stable, testable contract for prediction and certificate results.
+
+**How it works technically:**
+On startup, FastAPI loads `preprocessor.joblib` and `baseline_mlp.pt`. For each request, the service checks the raw feature names, constructs a one-row DataFrame in training-time order, transforms it to 194 features, applies the MLP sigmoid, and returns attack probability. `/analyze` also calls the existing randomized-smoothing utility with sigma 0.25 and 64 noisy samples.
+
+**Viva defense point:**
+The API's certificate is flow-specific but remains an L2 certificate in preprocessed feature space. The service never claims that this radius describes every physically valid packet-level manipulation.
+
+### 2026-10-15 - Phase 8: Intelligence workflow and analyst dashboard
+
+**Why we're doing it:**
+The dashboard turns the research artifacts into an analyst-facing workflow. A predicted attack probability alone is not enough for practical review; an analyst also needs evidence, a bounded recommendation, a clear limitation statement, and a reusable incident draft.
+
+**How it works technically:**
+The `/intelligence` endpoint calls two named tools: artifact-backed model plus smoothing analysis, and LIME local explanation. A deterministic policy maps those outputs to `escalate` or `suppress`, then composes a short explanation and structured report. The same FastAPI service hosts a static browser dashboard, so the frontend and API use one origin and no mock data.
+
+**Viva defense point:**
+This is bounded policy orchestration, not autonomous response. It cannot block traffic, contact an external system, or make a formal privacy claim. The incident report is explicitly a draft for human review.
+
+### 2026-10-16 - Phase 8: Dashboard result-state correction
+
+**Why we're doing it:**
+An analyst should see either the waiting state or the completed analysis, not both. Leaving the empty-state panel visible after a result makes a successful workflow look incomplete.
+
+**How it works technically:**
+The CSS now has a selector for `.empty-state[hidden]` that explicitly applies `display: none`. This ensures the JavaScript-controlled `hidden` attribute wins over the normal grid layout rule.

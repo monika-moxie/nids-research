@@ -17,8 +17,12 @@
 - Phase 7 results consolidation and an IEEE-style paper skeleton are now in place. They report the completed experimental conditions, tables, scoped claims, limitations, and future-validation priorities.
 - Phase 7 now includes four reproducible paper figures generated directly from saved metrics: attack F1, certified accuracy by radius, privacy-utility trade-off, and bridge clean-versus-certified comparison.
 - Phase 7 now has a literature-backed related-work draft and matching BibTeX records covering the dataset, attacks, certification, FedAvg, differential privacy, and federated NIDS.
-- Phase 7 remains open for repeated-seed validation and conversion into the institution's required IEEE template.
-- Next session should continue Phase 7 with a reproducibility/validation plan, or move to Phase 8 only after Phase 7 is signed off.
+- Phase 7 repeated-seed validation is complete for FedAvg, local-DP-style update noise, and the bridge experiment using seeds 42, 1337, and 2026.
+- Validation confirms the IID/non-IID and noise-utility patterns, and identifies numerical instability at noise multiplier 0.01 in one of three seeds; the paper records successful-run counts rather than hiding that failure.
+- Phase 7 remains open only for conversion into the institution's required IEEE template and final editorial review.
+- Phase 8 is complete as a separate practical demonstrator. The local FastAPI service and analyst dashboard load saved artifacts, validate raw flows, predict attack probability, certify local stability, generate LIME evidence, make a bounded escalate/suppress recommendation, and produce an incident-report draft.
+- Phase 8 is not part of the core research contribution. Its purpose is to demonstrate how the validated research artifacts can support a real analyst workflow.
+- The remaining project task is final IEEE-template conversion and editorial review for the Phase 7 paper.
 
 ## Phase Tracker
 
@@ -29,8 +33,8 @@
 - [x] Phase 4 - CI3203 FedAvg simulation across simulated clients
 - [x] Phase 5 - CI3203 local differential privacy and privacy-utility tradeoff
 - [x] Phase 6 - Bridge experiment: certified robustness under FL and LDP
-- [~] Phase 7 - Results consolidation and IEEE paper skeleton (skeleton and tables complete; figures and literature-backed finalization remain)
-- [ ] Phase 8 - Deployment Intelligence Layer: practical-applicability demo on top of FastAPI deployment, clearly separated from the core research contribution
+- [~] Phase 7 - Results consolidation and IEEE paper skeleton (tables, figures, literature review, and repeated-seed validation complete; IEEE-template conversion remains)
+- [x] Phase 8 - Deployment Intelligence Layer: FastAPI backend, LIME explanation, bounded decision workflow, incident draft, and analyst dashboard complete
 
 ## Session Notes
 
@@ -91,3 +95,19 @@ Added `paper/generate_figures.py`, a figure usage note, and four generated PNG f
 ### 2026-09-26 - Phase 7 related work
 
 Added `paper/RELATED_WORK.md` and `paper/references.bib`. The review positions the project as an integration and trade-off study rather than a claim to invent standard methods. It cites the UNSW-NB15 dataset, FGSM, PGD, randomized smoothing, FedAvg, differential privacy, and federated NIDS literature. Phase 7 now needs repeated-seed validation and final IEEE-template conversion.
+
+### 2026-09-26 - Phase 7 repeated-seed validation
+
+Added `paper/run_repeated_seed_validation.py` and tests, then ran seeds 42, 1337, and 2026 with the original CPU-friendly configurations. FedAvg F1 was IID 0.8460 +/- 0.0090 and non-IID 0.8187 +/- 0.0241. At update-noise 0.005, IID F1 was 0.8190 +/- 0.0053 and non-IID F1 was 0.7626 +/- 0.0172. At noise 0.01, one of three seeds produced NaN predictions in both client distributions; this is reported as instability rather than excluded. In the bridge, clean F1 / certified accuracy at radius 0.10 were centralized 0.8886 +/- 0.0000 / 0.4683 +/- 0.0379, FedAvg 0.7130 +/- 0.0008 / 0.5483 +/- 0.0257, and FedAvg+local-DP-style noise 0.7187 +/- 0.0031 / 0.4367 +/- 0.1172. Final IEEE template conversion remains.
+
+### 2026-09-26 - Phase 8 backend foundation
+
+Added the separate `deployment_intelligence` FastAPI package and `deployment-intelligence/README.md`. The API loads the Phase 1 MLP and fitted preprocessor, exposes health and metadata endpoints, validates all 42 raw model-input fields, returns attack probability, and produces a flow-specific smoothing certificate scoped to preprocessed feature space. Added FastAPI/Uvicorn and integration-test dependencies. The API tests pass on a real local test-set row; the backend is running locally at `http://127.0.0.1:8000/docs`. Phase 8 is not complete: explanations, escalation policy, incident reports, and frontend remain.
+
+### 2026-10-15 - Phase 8 intelligence workflow and dashboard
+
+Completed the practical deployment demonstrator. `POST /intelligence` calls the saved-model analysis and LIME explanation tools, applies an explicit escalate/suppress policy, produces a plain-English summary, and creates a structured draft incident report. Added a same-origin analyst dashboard at `/` with local demo-flow loading, raw JSON input, probability, certificate, local feature evidence, recommendation, and report-copying workflow. The updated backend is running locally at `http://127.0.0.1:8001/`; focused deployment tests pass. Phase 8 remains explicitly separate from the core research claims.
+
+### 2026-10-16 - Phase 8 dashboard state fix
+
+Fixed the dashboard empty-state CSS so the "Awaiting flow analysis" panel is hidden once a completed intelligence result is rendered. This prevents the initial empty state from occupying the results workspace below a real analyst recommendation.

@@ -26,3 +26,8 @@ The implementation should produce explainable results that can be written into a
 - `figures/`: generated PNG figures and usage notes.
 - `RELATED_WORK.md` and `references.bib`: literature-backed related-work draft
   and matching reference records.
+- `run_repeated_seed_validation.py`: reruns the key federated and bridge
+  experiments across declared seeds and writes mean plus sample-standard-
+  deviation summaries under `outputs/phase7-validation/`.
+- `REPEATED_SEED_VALIDATION.md`: paper-ready interpretation of the three-seed
+  results, including high-noise numerical instability.

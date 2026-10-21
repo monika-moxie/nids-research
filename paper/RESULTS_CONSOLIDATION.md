@@ -149,3 +149,12 @@ certified-robustness profile.
 
 Each figure must cite the corresponding table and repeat the key experiment
 condition in its caption.
+
+## Repeated-Seed Qualification
+
+Tables 4, 5, and 6 record the original deterministic runs used during phase
+implementation. Their repeated-seed qualification is in
+`REPEATED_SEED_VALIDATION.md`. In the final manuscript, use the validation
+means and sample standard deviations for federated and bridge conclusions, and
+state that noise multiplier 0.01 was numerically unstable in one of three
+seeds.

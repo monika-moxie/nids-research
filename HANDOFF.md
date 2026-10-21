@@ -329,3 +329,94 @@ An academic paper needs to establish what the field already knows before it can 
 
 **Analogy:**
 The literature review is the map legend: it shows which roads were built by earlier researchers and makes clear which route this project is actually travelling.
+
+### 2026-09-26 - Phase 7: Repeated-Seed Validation
+
+**What it does in plain language:**
+Repeats the federated, privacy-noise, and bridge experiments three times with different controlled seeds, then reports the average, variability, and any failed runs.
+
+**Why it exists:**
+It tests whether the project conclusions are stable rather than based on one fortunate random run. It also makes high-noise failure visible instead of silently selecting only successful outcomes.
+
+**Likely teacher questions and confident answers:**
+
+1. **Why only three seeds?**
+   Three seeds are a resource-conscious first reproducibility check for CPU experiments. They reveal variability and instability, while a larger study remains future work.
+
+2. **What does `mean +/- sample standard deviation` mean?**
+   The mean is the average performance across runs. The sample standard deviation measures how much those seed-specific results spread around the average, using `n - 1` because the runs are a sample of possible seeds.
+
+3. **Why keep a NaN failure in the result?**
+   It shows that noise 0.01 is not reliably stable under the chosen configuration. Removing it would overstate the method's reliability.
+
+4. **Did repeated seeds change the bridge conclusion?**
+   No. The exact values vary, but the safe conclusion remains that federated training and local update noise change clean utility and certification differently, so both must be reported together.
+
+**Analogy:**
+One experiment run is one thermometer reading. Repeated-seed validation takes several readings and records both the typical temperature and whether the thermometer sometimes fails.
+
+### 2026-09-26 - Phase 8: FastAPI Backend Foundation
+
+**What it does in plain language:**
+Provides a small local web API that can receive one complete network-flow record and return the trained NIDS model's prediction, attack probability, and a flow-specific smoothing certificate.
+
+**Why it exists:**
+It makes the existing research model usable by an analyst dashboard while ensuring the demo uses the same artifacts as the paper experiments.
+
+**Likely teacher questions and confident answers:**
+
+1. **Is the deployed API using a new model?**
+   No. It loads the saved Phase 1 MLP and fitted preprocessor, so its clean prediction path matches the research baseline.
+
+2. **Why does the API reject missing fields?**
+   The preprocessor was fitted on 42 raw fields. Missing or renamed fields would change the model input and make the result scientifically invalid.
+
+3. **What does `/analyze` add beyond `/predict`?**
+   It runs randomized smoothing for that individual flow and returns its prediction, lower confidence bound, abstention status, and certified radius.
+
+4. **Is this web application a core research contribution?**
+   No. It is a clearly separated Phase 8 practical demonstrator that makes the research artifacts easier to inspect.
+
+**Analogy:**
+The backend is a controlled laboratory counter: it accepts a correctly labeled sample, runs the same calibrated instrument used in the study, and returns a traceable result for the dashboard.
+
+### 2026-10-15 - Phase 8: Intelligence Workflow and Analyst Dashboard
+
+**What it does in plain language:**
+Gives an analyst one screen to load a valid flow, see the NIDS prediction and certificate, inspect LIME feature evidence, receive an escalate/suppress recommendation, and copy a draft incident report.
+
+**Why it exists:**
+The core research shows trade-offs experimentally. This separate demonstrator shows how those artifacts could support a review workflow without claiming they automatically secure a network.
+
+**Likely teacher questions and confident answers:**
+
+1. **Is this an autonomous security agent?**
+   No. It is a bounded workflow with two possible recommendations. It produces a human-review draft and has no capability to take external actions.
+
+2. **Why use LIME instead of saying the model is explainable by itself?**
+   The MLP prediction is not directly interpretable. LIME estimates which local preprocessed features support or oppose the attack prediction for that one flow.
+
+3. **Does the dashboard use dummy outputs?**
+   No. It calls the deployed FastAPI endpoint, which loads the saved Phase 1 preprocessor and MLP artifacts and runs the actual smoothing and LIME utilities.
+
+4. **Can the dashboard claim the incident is definitely malicious?**
+   No. It reports model evidence and a recommendation. The generated report says it is a draft and recommends human correlation with raw telemetry and security logs.
+
+**Analogy:**
+The dashboard is a security analyst's case file: it gathers the detector's alert, supporting clues, confidence boundary, and a suggested next step in one place, while leaving the final decision to a person.
+
+### 2026-10-16 - Phase 8: Dashboard Result-State Fix
+
+**What it does in plain language:**
+Removes the initial waiting panel as soon as the dashboard has a real flow-analysis result to show.
+
+**Why it exists:**
+The analyst should not see a message saying analysis is still awaited underneath a completed escalation recommendation.
+
+**Likely teacher question and confident answer:**
+
+1. **Why is this worth documenting?**
+   In an analyst tool, state clarity matters. The screen must accurately distinguish waiting, analysis, and completed-result states so people do not misread the system status.
+
+**Analogy:**
+This is like removing the "waiting room" sign once a case file is open on the analyst's desk.
