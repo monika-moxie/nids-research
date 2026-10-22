@@ -76,3 +76,31 @@ class DeploymentIntelligenceApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertIn("missing fields: dur", response.json()["detail"])
         self.assertIn("unknown fields: not_a_training_feature", response.json()["detail"])
+
+    def test_batch_score_returns_only_flagged_rows_with_selectable_features(self):
+        batch = pd.DataFrame([self.valid_features, self.valid_features])
+        batch.insert(0, "id", [1, 2])
+        batch["label"] = [0, 0]
+        batch["attack_cat"] = ["Normal", "Normal"]
+        csv_content = batch.to_csv(index=False).encode("utf-8")
+
+        with TestClient(app) as client:
+            response = client.post("/batch-score", files={"file": ("flows.csv", csv_content, "text/csv")})
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["total_rows"], 2)
+        self.assertEqual(data["flagged_count"], len(data["alerts"]))
+        for alert in data["alerts"]:
+            self.assertEqual(set(alert["features"]), set(self.valid_features))
+            self.assertGreaterEqual(alert["attack_probability"], 0.5)
+
+    def test_batch_score_rejects_missing_required_columns(self):
+        incomplete = pd.DataFrame([self.valid_features]).drop(columns=["dur"])
+        csv_content = incomplete.to_csv(index=False).encode("utf-8")
+
+        with TestClient(app) as client:
+            response = client.post("/batch-score", files={"file": ("incomplete.csv", csv_content, "text/csv")})
+
+        self.assertEqual(response.status_code, 422)
+        self.assertIn("missing columns: dur", response.json()["detail"])

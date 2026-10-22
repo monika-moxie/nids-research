@@ -34,3 +34,15 @@ Open `http://127.0.0.1:8000/` for the analyst dashboard or
 2. Run the intelligence workflow.
 3. Inspect probability, certificate, LIME evidence, decision, and report.
 4. Treat the resulting report as an analyst draft, not an automatic response.
+
+## Batch Triage
+
+The dashboard can screen a CSV containing up to 500 flows. The CSV must contain
+the 42 raw model-input columns; the standard UNSW-NB15 `id`, `label`, and
+`attack_cat` columns may also be present and are ignored. Batch screening only
+uses the clean saved model to build a queue of flows at or above the 0.50
+attack threshold. Selecting one queue item then runs the existing detailed
+certificate, LIME, decision, and report workflow.
+
+This separation is intentional: LIME and randomized smoothing are relatively
+expensive per flow, while the queue is intended to be a fast screening step.

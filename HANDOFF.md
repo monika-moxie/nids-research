@@ -420,3 +420,28 @@ The analyst should not see a message saying analysis is still awaited underneath
 
 **Analogy:**
 This is like removing the "waiting room" sign once a case file is open on the analyst's desk.
+
+### 2026-10-21 - Phase 8: Batch CSV Triage Queue
+
+**What it does in plain language:**
+Lets an analyst upload a small CSV batch of network flows, quickly identifies flows the saved detector flags as attacks, and presents them as a queue. Choosing one flow opens the already-existing detailed analysis with certificate, LIME evidence, recommendation, and incident-report draft.
+
+**Why it exists:**
+Analysts triage collections of flows rather than manually pasting every flow one at a time. The queue makes the practical demonstrator resemble that real workflow without changing the core research experiments.
+
+**Likely teacher questions and confident answers:**
+
+1. **Why not compute LIME and smoothing for every uploaded row?**
+   They are computationally expensive and intended for detailed investigation. The queue first performs fast clean-model screening, then computes evidence only for a flow an analyst selects.
+
+2. **How do you prevent a wrong CSV layout from being scored?**
+   The backend checks every required training-time input column and rejects missing or unknown columns. It accepts only the known UNSW-NB15 non-input columns `id`, `label`, and `attack_cat` as extras, then removes them before inference.
+
+3. **Does a queue entry mean the flow is definitely malicious?**
+   No. It means the saved model assigned attack probability at least 0.50. The analyst still reviews the selected flow's evidence and correlates it with real telemetry.
+
+4. **Is batch triage part of the research contribution?**
+   No. It is a Phase 8 deployment demonstrator feature. The research findings remain the attack, certification, federated-learning, privacy, and bridge experiments.
+
+**Analogy:**
+The batch queue is like an airport security screening lane: it quickly identifies bags needing inspection, while the careful inspection happens only after one is selected.

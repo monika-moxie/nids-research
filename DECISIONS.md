@@ -42,6 +42,16 @@
 
 **Tradeoff:** Teammates must download or copy the dataset themselves, but the repository remains lightweight and GitHub-friendly.
 
+### 2026-10-21 - Phase 8 batch triage boundary
+
+**Decision:** Add a CSV batch-screening queue to the Phase 8 demonstrator, but run randomized smoothing and LIME only after an analyst selects an individual flagged flow.
+
+**Why:** Batch scoring reflects the operational workflow of screening many flows, while certificate sampling and local explanations are expensive and meaningful at an individual-flow level. Applying detailed explanations blindly to every uploaded row would make the interface slow and could imply that all flows have been equally reviewed.
+
+**How:** `POST /batch-score` accepts a bounded CSV, validates its model-input schema, scores rows with the saved clean MLP in one vectorized batch, and returns rows at or above the fixed 0.50 attack threshold. The dashboard retains each flagged row's validated features and invokes the existing `/intelligence` endpoint only when an analyst selects that row.
+
+**Tradeoff:** The queue does not certify or explain every row upfront. This is intentional: it separates fast screening from slower evidence generation and keeps the demonstrator responsive on a laptop.
+
 ### 2026-08-23 - Phase 1 baseline result
 
 **Decision:** Treat the 20-epoch MLP trained on the official UNSW-NB15 train CSV as the first shared baseline for downstream attacks and defenses.

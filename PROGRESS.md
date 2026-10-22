@@ -23,6 +23,7 @@
 - Phase 8 is complete as a separate practical demonstrator. The local FastAPI service and analyst dashboard load saved artifacts, validate raw flows, predict attack probability, certify local stability, generate LIME evidence, make a bounded escalate/suppress recommendation, and produce an incident-report draft.
 - Phase 8 is not part of the core research contribution. Its purpose is to demonstrate how the validated research artifacts can support a real analyst workflow.
 - The remaining project task is final IEEE-template conversion and editorial review for the Phase 7 paper.
+- Phase 8 now includes batch CSV triage: up to 500 schema-valid flows can be scored with the saved model, and only flagged rows enter a selectable analyst queue for detailed evidence generation.
 
 ## Phase Tracker
 
@@ -111,3 +112,7 @@ Completed the practical deployment demonstrator. `POST /intelligence` calls the 
 ### 2026-10-16 - Phase 8 dashboard state fix
 
 Fixed the dashboard empty-state CSS so the "Awaiting flow analysis" panel is hidden once a completed intelligence result is rendered. This prevents the initial empty state from occupying the results workspace below a real analyst recommendation.
+
+### 2026-10-21 - Phase 8 batch triage enhancement
+
+Added a bounded CSV screening workflow to the separate practical demonstrator. The FastAPI endpoint accepts up to 500 rows and 2 MB, requires all 42 raw model fields, ignores the standard UNSW-NB15 `id`, `label`, and `attack_cat` columns when supplied, and returns only rows with an attack prediction. The dashboard renders these rows as a selectable alert queue; choosing one calls the existing detailed intelligence workflow, including smoothing, LIME, bounded recommendation, and report draft. All 29 automated tests pass.

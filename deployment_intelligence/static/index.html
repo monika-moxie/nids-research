@@ -33,6 +33,13 @@
         <label for="flow-json">Raw feature JSON</label>
         <textarea id="flow-json" spellcheck="false" aria-label="Raw feature JSON"></textarea>
         <p class="input-note" id="schema-note">Loading required model fields...</p>
+        <div class="batch-upload">
+          <p class="eyebrow">Batch triage</p>
+          <label for="batch-file">CSV flow batch</label>
+          <input id="batch-file" type="file" accept=".csv,text/csv">
+          <button id="score-batch" class="button secondary" title="Score up to 500 flows and show model-flagged rows"><i data-lucide="list-filter"></i>Screen batch</button>
+          <p class="input-note">Up to 500 rows. `id`, `label`, and `attack_cat` are ignored when present.</p>
+        </div>
       </aside>
 
       <section class="results-area" aria-live="polite">
@@ -74,6 +81,12 @@
             </div>
           </article>
         </div>
+
+        <section id="alert-queue" class="surface alert-queue" hidden>
+          <div class="surface-heading"><div><p class="eyebrow">Batch triage</p><h3>Flagged flow queue</h3></div><span id="queue-summary" class="queue-summary"></span></div>
+          <p class="queue-note">Select a flagged flow to run its detailed certificate, LIME explanation, recommendation, and incident draft.</p>
+          <div id="queue-list" class="queue-list"></div>
+        </section>
       </section>
     </section>
   </main>

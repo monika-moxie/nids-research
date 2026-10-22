@@ -3,6 +3,7 @@ const results = document.querySelector('#results');
 const emptyState = document.querySelector('#empty-state');
 const toast = document.querySelector('#toast');
 let latestReport = null;
+let batchAlerts = [];
 
 function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600); }
 function pretty(value) { return JSON.stringify(value, null, 2); }
@@ -59,8 +60,43 @@ async function analyze() {
   finally { button.disabled = false; button.innerHTML = '<i data-lucide="scan-search"></i>Analyze flow'; lucide.createIcons(); }
 }
 
+function renderQueue(data) {
+  batchAlerts = data.alerts;
+  const queue = document.querySelector('#alert-queue');
+  const list = document.querySelector('#queue-list');
+  queue.hidden = false;
+  document.querySelector('#queue-summary').textContent = `${data.flagged_count} flagged / ${data.total_rows} screened`;
+  if (!data.alerts.length) {
+    list.innerHTML = '<p class="queue-empty">No flows crossed the 50% attack threshold in this batch.</p>';
+    return;
+  }
+  list.innerHTML = data.alerts.map((alert, index) => `<button class="queue-item" data-alert-index="${index}" title="Analyze flagged CSV row ${alert.row_number}"><span>Row ${alert.row_number}</span><strong>${percent(alert.attack_probability)}</strong><i data-lucide="arrow-up-right"></i></button>`).join('');
+  list.querySelectorAll('[data-alert-index]').forEach(button => button.addEventListener('click', () => selectAlert(Number(button.dataset.alertIndex))));
+  lucide.createIcons();
+}
+
+async function scoreBatch() {
+  const file = document.querySelector('#batch-file').files[0];
+  if (!file) { showToast('Choose a CSV batch first'); return; }
+  const button = document.querySelector('#score-batch'); button.disabled = true; button.innerHTML = '<i data-lucide="loader-circle"></i>Screeningâ€¦'; lucide.createIcons();
+  try {
+    const form = new FormData(); form.append('file', file);
+    const data = await request('/batch-score', { method: 'POST', body: form });
+    renderQueue(data); showToast(`${data.flagged_count} flagged flow${data.flagged_count === 1 ? '' : 's'} found`);
+  } catch (error) { showToast(error.message); }
+  finally { button.disabled = false; button.innerHTML = '<i data-lucide="list-filter"></i>Screen batch'; lucide.createIcons(); }
+}
+
+function selectAlert(index) {
+  const alert = batchAlerts[index];
+  jsonInput.value = pretty(alert.features);
+  showToast(`Row ${alert.row_number} loaded for detailed analysis`);
+  analyze();
+}
+
 document.querySelector('#load-demo').addEventListener('click', loadDemo);
 document.querySelector('#analyze').addEventListener('click', analyze);
+document.querySelector('#score-batch').addEventListener('click', scoreBatch);
 document.querySelector('#copy-report').addEventListener('click', async () => { if (latestReport) { await navigator.clipboard.writeText(pretty(latestReport)); showToast('Incident report copied'); } });
 
 request('/metadata').then(data => document.querySelector('#schema-note').textContent = `Required: ${data.model_input_fields.length} raw fields. Excludes: ${data.excluded_fields.join(', ')}.`).catch(() => { document.querySelector('#api-status').textContent = 'API unavailable'; });

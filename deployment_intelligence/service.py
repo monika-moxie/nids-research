@@ -69,6 +69,21 @@ class ArtifactBackedNidsService:
             probability = float(torch.sigmoid(logits).item())
         return self._prediction_payload(probability)
 
+    def predict_batch(self, raw_flows: list[dict[str, Any]]) -> list[dict[str, object]]:
+        """Score validated raw flows together for the analyst alert queue."""
+
+        self._require_loaded()
+        if not raw_flows:
+            return []
+
+        frame = pd.DataFrame([self._ordered_features(flow) for flow in raw_flows])
+        transformed = self.preprocessor.transform(frame).astype("float32")
+        torch, _ = require_torch()
+        with torch.no_grad():
+            logits = self.model(torch.from_numpy(transformed))
+            probabilities = torch.sigmoid(logits).cpu().numpy().reshape(-1)
+        return [self._prediction_payload(float(probability)) for probability in probabilities]
+
     def analyze(
         self,
         raw_features: dict[str, Any],
@@ -133,6 +148,12 @@ class ArtifactBackedNidsService:
 
     def _transform(self, raw_features: dict[str, Any]) -> np.ndarray:
         self._require_loaded()
+        frame = pd.DataFrame([self._ordered_features(raw_features)])
+        return self.preprocessor.transform(frame).astype("float32")
+
+    def _ordered_features(self, raw_features: dict[str, Any]) -> dict[str, Any]:
+        """Validate one raw flow and put fields in the training-time order."""
+
         supplied = set(raw_features)
         expected = set(self.input_fields)
         missing = sorted(expected - supplied)
@@ -145,8 +166,7 @@ class ArtifactBackedNidsService:
                 details.append(f"unknown fields: {', '.join(unknown)}")
             raise ValueError("Invalid flow schema; " + "; ".join(details))
 
-        frame = pd.DataFrame([{field: raw_features[field] for field in self.input_fields}])
-        return self.preprocessor.transform(frame).astype("float32")
+        return {field: raw_features[field] for field in self.input_fields}
 
     def _get_lime_explainer(self) -> LimeTabularExplainer:
         if self.lime_explainer is not None:

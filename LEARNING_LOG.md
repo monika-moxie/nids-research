@@ -200,3 +200,14 @@ An analyst should see either the waiting state or the completed analysis, not bo
 
 **How it works technically:**
 The CSS now has a selector for `.empty-state[hidden]` that explicitly applies `display: none`. This ensures the JavaScript-controlled `hidden` attribute wins over the normal grid layout rule.
+
+### 2026-10-21 - Phase 8: Batch screening versus detailed analysis
+
+**Why we're doing it:**
+Security operations usually begin with triage: many flows are screened quickly, then a smaller number of suspicious ones receive detailed human review. A one-flow form shows inference, but a batch queue better demonstrates the practical path from data intake to investigation.
+
+**How it works technically:**
+The browser sends a CSV as multipart form data. The API limits it to 500 rows and 2 MB, checks that all 42 training-time raw fields exist, removes only the known non-input UNSW-NB15 columns, and feeds the resulting DataFrame through the saved preprocessor and MLP in one batch. Rows with attack probability at least 0.50 appear in the queue. Selecting a row sends its same validated feature dictionary to `/intelligence`, which then computes the more expensive smoothing certificate and LIME explanation.
+
+**Viva defense point:**
+The batch queue is not a new research metric and does not claim that every alert is certified. It is a practical Phase 8 workflow that keeps fast prediction separate from per-flow evidence generation and human review.

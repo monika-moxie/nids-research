@@ -86,3 +86,21 @@ class MetadataResponse(BaseModel):
     excluded_fields: list[str]
     preprocessed_feature_count: int
     certificate_space: str
+
+
+class BatchAlert(BaseModel):
+    """One model-flagged CSV row available for deeper analyst review."""
+
+    row_number: int
+    predicted_label: str
+    attack_probability: float
+    features: dict[str, Any]
+
+
+class BatchScoreResponse(BaseModel):
+    """Fast clean-model screening result for a bounded CSV batch."""
+
+    total_rows: int
+    flagged_count: int
+    decision_threshold: float
+    alerts: list[BatchAlert]
