@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import Path
 
@@ -13,12 +14,16 @@ from fastapi.staticfiles import StaticFiles
 
 from deployment_intelligence.schemas import (
     AnalysisResponse,
+    AnalystFeedbackRequest,
+    AnalystFeedbackResponse,
+    AuditLogResponse,
     BatchScoreResponse,
     FlowRequest,
     IntelligenceResponse,
     MetadataResponse,
     PredictionResponse,
 )
+from deployment_intelligence.audit import AnalystAuditStore
 from deployment_intelligence.intelligence import IntelligenceOrchestrator
 from deployment_intelligence.service import ArtifactBackedNidsService
 from shared.config import DatasetConfig
@@ -34,6 +39,9 @@ async def lifespan(app: FastAPI):
     service = ArtifactBackedNidsService()
     service.load()
     app.state.nids_service = service
+    audit_store = AnalystAuditStore()
+    audit_store.initialize()
+    app.state.audit_store = audit_store
     yield
 
 
@@ -50,6 +58,10 @@ app = FastAPI(
 
 def get_service(request: Request) -> ArtifactBackedNidsService:
     return request.app.state.nids_service
+
+
+def get_audit_store(request: Request) -> AnalystAuditStore:
+    return request.app.state.audit_store
 
 
 @app.get("/health")
@@ -82,9 +94,35 @@ def analyze(payload: FlowRequest, request: Request) -> dict[str, object]:
 @app.post("/intelligence", response_model=IntelligenceResponse)
 def intelligence(payload: FlowRequest, request: Request) -> dict[str, object]:
     try:
-        return IntelligenceOrchestrator(get_service(request)).analyze_flagged_flow(payload.features)
+        result = IntelligenceOrchestrator(get_service(request)).analyze_flagged_flow(payload.features)
+        get_audit_store(request).record_intelligence(result)
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post("/feedback", response_model=AnalystFeedbackResponse)
+def submit_feedback(payload: AnalystFeedbackRequest, request: Request) -> dict[str, object]:
+    """Record a human verdict for a report created by this local service."""
+
+    try:
+        return get_audit_store(request).record_feedback(
+            report_id=payload.report_id,
+            verdict=payload.verdict,
+            analyst_note=payload.analyst_note.strip(),
+            submitted_at_utc=datetime.now(UTC).isoformat(),
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Incident report was not found in the local audit log.") from exc
+
+
+@app.get("/audit-log", response_model=AuditLogResponse)
+def audit_log(request: Request, limit: int = 20) -> dict[str, object]:
+    """Return recent local audit metadata, without raw traffic features."""
+
+    if not 1 <= limit <= 100:
+        raise HTTPException(status_code=422, detail="limit must be between 1 and 100.")
+    return {"records": get_audit_store(request).list_records(limit)}
 
 
 @app.post("/batch-score", response_model=BatchScoreResponse)

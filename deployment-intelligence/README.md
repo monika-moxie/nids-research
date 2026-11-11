@@ -46,3 +46,22 @@ certificate, LIME, decision, and report workflow.
 
 This separation is intentional: LIME and randomized smoothing are relatively
 expensive per flow, while the queue is intended to be a fast screening step.
+
+## Analyst Feedback and Audit Trail
+
+Each detailed intelligence result creates a local SQLite audit record under
+`outputs/deployment-intelligence/`. The dashboard lets an analyst record
+`confirmed_attack`, `false_positive`, or `needs_review`, with an optional
+short note. The audit store retains report ID, time, recommendation, severity,
+attack probability, certificate radius, and the feedback outcome. It does not
+store a second copy of raw flow features.
+
+This is a local demonstrator audit trail, not a multi-user production case
+management system. The audit endpoints are `POST /feedback` and `GET /audit-log`.
+
+## Incident Report Export
+
+After detailed analysis, the dashboard can download the current incident draft
+as Markdown or JSON. Both exports include model evidence, certificate scope,
+LIME contributions, the incident recommendation, and submitted analyst feedback
+when available. Raw flow features are excluded from exports by design.

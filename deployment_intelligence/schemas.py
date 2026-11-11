@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -104,3 +104,33 @@ class BatchScoreResponse(BaseModel):
     flagged_count: int
     decision_threshold: float
     alerts: list[BatchAlert]
+
+
+class AnalystFeedbackRequest(BaseModel):
+    """A human verdict for one locally generated incident report."""
+
+    report_id: str = Field(min_length=5, max_length=64)
+    verdict: Literal["confirmed_attack", "false_positive", "needs_review"]
+    analyst_note: str = Field(default="", max_length=1000)
+
+
+class AnalystFeedbackResponse(BaseModel):
+    report_id: str
+    analyst_verdict: str
+    analyst_note: str
+    feedback_at_utc: str
+
+
+class AuditRecordResponse(AnalystFeedbackResponse):
+    created_at_utc: str
+    recommended_action: str
+    severity: str
+    attack_probability: float
+    certified_radius: float
+    analyst_verdict: str | None
+    analyst_note: str | None
+    feedback_at_utc: str | None
+
+
+class AuditLogResponse(BaseModel):
+    records: list[AuditRecordResponse]

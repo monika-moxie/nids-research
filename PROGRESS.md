@@ -24,6 +24,8 @@
 - Phase 8 is not part of the core research contribution. Its purpose is to demonstrate how the validated research artifacts can support a real analyst workflow.
 - The remaining project task is final IEEE-template conversion and editorial review for the Phase 7 paper.
 - Phase 8 now includes batch CSV triage: up to 500 schema-valid flows can be scored with the saved model, and only flagged rows enter a selectable analyst queue for detailed evidence generation.
+- Phase 8 now includes analyst feedback and a local SQLite audit trail. It records review outcomes against generated report IDs while deliberately excluding raw flow features from audit storage.
+- Phase 8 now supports local Markdown and JSON incident-report exports that include model evidence and any recorded analyst verdict while excluding raw flow features.
 
 ## Phase Tracker
 
@@ -116,3 +118,11 @@ Fixed the dashboard empty-state CSS so the "Awaiting flow analysis" panel is hid
 ### 2026-10-21 - Phase 8 batch triage enhancement
 
 Added a bounded CSV screening workflow to the separate practical demonstrator. The FastAPI endpoint accepts up to 500 rows and 2 MB, requires all 42 raw model fields, ignores the standard UNSW-NB15 `id`, `label`, and `attack_cat` columns when supplied, and returns only rows with an attack prediction. The dashboard renders these rows as a selectable alert queue; choosing one calls the existing detailed intelligence workflow, including smoothing, LIME, bounded recommendation, and report draft. All 29 automated tests pass.
+
+### 2026-10-22 - Phase 8 analyst feedback and audit trail
+
+Added human-review controls for `confirmed_attack`, `false_positive`, and `needs_review`, plus an optional note. Every detailed intelligence result now writes a minimal local SQLite audit record keyed by its generated report ID, and feedback updates that same record. The database stores report and model-decision metadata only, not raw flow features. `POST /feedback` rejects unknown report IDs; `GET /audit-log` supports limited local review. All 31 automated tests pass.
+
+### 2026-11-11 - Phase 8 incident report export
+
+Added browser-local Markdown and JSON export controls for the current detailed incident report. Both formats include report metadata, model evidence, smoothing certificate scope, LIME contributions, and submitted analyst feedback when available. They intentionally omit raw flow features. The dashboard contract test verifies both export controls, and the full automated suite passes.

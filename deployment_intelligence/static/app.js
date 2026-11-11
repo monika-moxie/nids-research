@@ -3,6 +3,7 @@ const results = document.querySelector('#results');
 const emptyState = document.querySelector('#empty-state');
 const toast = document.querySelector('#toast');
 let latestReport = null;
+let latestFeedback = null;
 let batchAlerts = [];
 
 function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600); }
@@ -47,8 +48,11 @@ function render(data) {
   document.querySelector('#report-status').textContent = data.incident_report.status;
   document.querySelector('#next-step').textContent = data.incident_report.recommended_next_step;
   document.querySelector('#report-limitation').textContent = data.incident_report.limitation;
+  document.querySelector('#analyst-note').value = '';
+  document.querySelector('#feedback-status').textContent = 'No analyst verdict recorded.';
   renderFeatures(data.explanation.top_features);
   latestReport = data.incident_report;
+  latestFeedback = null;
 }
 
 async function analyze() {
@@ -94,9 +98,74 @@ function selectAlert(index) {
   analyze();
 }
 
+async function submitFeedback(verdict) {
+  if (!latestReport) { showToast('Analyze a flow before recording feedback'); return; }
+  const buttons = document.querySelectorAll('[data-verdict]');
+  buttons.forEach(button => button.disabled = true);
+  try {
+    const feedback = await request('/feedback', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        report_id: latestReport.report_id,
+        verdict,
+        analyst_note: document.querySelector('#analyst-note').value,
+      }),
+    });
+    latestFeedback = feedback;
+    document.querySelector('#feedback-status').textContent = `Recorded: ${feedback.analyst_verdict.replaceAll('_', ' ')}.`;
+    showToast('Analyst feedback recorded');
+  } catch (error) { showToast(error.message); }
+  finally { buttons.forEach(button => button.disabled = false); }
+}
+
+function exportPayload() {
+  if (!latestReport) return null;
+  return {
+    exported_at_utc: new Date().toISOString(),
+    incident_report: latestReport,
+    analyst_feedback: latestFeedback,
+    export_scope: 'Report metadata and model evidence only; raw flow features are excluded.',
+  };
+}
+
+function downloadFile(content, fileName, mimeType) {
+  const url = URL.createObjectURL(new Blob([content], {type: mimeType}));
+  const link = document.createElement('a');
+  link.href = url; link.download = fileName; link.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadJsonReport() {
+  const payload = exportPayload();
+  if (!payload) { showToast('Analyze a flow before exporting a report'); return; }
+  downloadFile(pretty(payload), `${latestReport.report_id}.json`, 'application/json');
+  showToast('JSON report downloaded');
+}
+
+function markdownReport(payload) {
+  const report = payload.incident_report;
+  const evidence = report.model_evidence;
+  const features = evidence.top_lime_features.map(item => `- ${item.feature}: ${item.direction.replaceAll('_', ' ')} (${item.contribution.toFixed(3)})`).join('\n');
+  const feedback = payload.analyst_feedback
+    ? `- Verdict: ${payload.analyst_feedback.analyst_verdict.replaceAll('_', ' ')}\n- Note: ${payload.analyst_feedback.analyst_note || 'None'}\n- Recorded: ${payload.analyst_feedback.feedback_at_utc}`
+    : '- No analyst verdict has been recorded.';
+  return `# ${report.report_id}\n\n## Incident Summary\n- Created: ${report.created_at_utc}\n- Status: ${report.status}\n- Recommended action: ${report.recommended_action}\n- Severity: ${report.severity}\n- Summary: ${report.summary}\n\n## Model Evidence\n- Attack probability: ${percent(evidence.attack_probability)}\n- Decision threshold: ${percent(evidence.decision_threshold)}\n- Certified radius: ${evidence.certificate.certified_radius.toFixed(3)}\n- Certificate scope: ${evidence.certificate.certificate_space}\n\n## LIME Evidence\n${features}\n\n## Analyst Feedback\n${feedback}\n\n## Limitation\n${report.limitation}\n`;
+}
+
+function downloadMarkdownReport() {
+  const payload = exportPayload();
+  if (!payload) { showToast('Analyze a flow before exporting a report'); return; }
+  downloadFile(markdownReport(payload), `${latestReport.report_id}.md`, 'text/markdown');
+  showToast('Markdown report downloaded');
+}
+
 document.querySelector('#load-demo').addEventListener('click', loadDemo);
 document.querySelector('#analyze').addEventListener('click', analyze);
 document.querySelector('#score-batch').addEventListener('click', scoreBatch);
+document.querySelectorAll('[data-verdict]').forEach(button => button.addEventListener('click', () => submitFeedback(button.dataset.verdict)));
+document.querySelector('#download-json').addEventListener('click', downloadJsonReport);
+document.querySelector('#download-markdown').addEventListener('click', downloadMarkdownReport);
 document.querySelector('#copy-report').addEventListener('click', async () => { if (latestReport) { await navigator.clipboard.writeText(pretty(latestReport)); showToast('Incident report copied'); } });
 
 request('/metadata').then(data => document.querySelector('#schema-note').textContent = `Required: ${data.model_input_fields.length} raw fields. Excludes: ${data.excluded_fields.join(', ')}.`).catch(() => { document.querySelector('#api-status').textContent = 'API unavailable'; });

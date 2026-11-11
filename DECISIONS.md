@@ -52,6 +52,26 @@
 
 **Tradeoff:** The queue does not certify or explain every row upfront. This is intentional: it separates fast screening from slower evidence generation and keeps the demonstrator responsive on a laptop.
 
+### 2026-10-22 - Phase 8 human feedback and data minimization
+
+**Decision:** Add a local SQLite audit trail for generated incident reports and analyst verdicts, but store only decision metadata and feedback rather than raw flow features.
+
+**Why:** A bounded model recommendation should be reviewable and contestable by a human analyst. Auditability requires a link between a report, its model evidence, and a later analyst verdict. However, retaining raw traffic unnecessarily would duplicate sensitive operational data.
+
+**How:** Each `/intelligence` response writes its generated report ID, timestamp, action, severity, attack probability, and certificate radius to SQLite. `POST /feedback` updates the matching ID with a controlled verdict and optional note; `GET /audit-log` returns recent metadata records. Unknown IDs are rejected.
+
+**Tradeoff:** This is deliberately a single-machine demonstrator without authentication, multi-user ownership, retention policy, or tamper-evident logging. It must not be described as a production SOC case-management system.
+
+### 2026-11-11 - Phase 8 local incident export
+
+**Decision:** Generate Markdown and JSON incident-report downloads in the browser from the current intelligence result and analyst feedback, without adding a server-side export store.
+
+**Why:** A security review workflow needs a handoff artifact, but exporting should not create another persistent raw-traffic store. Browser-local generation makes the feature immediate and keeps the existing backend data-minimization boundary intact.
+
+**How:** The dashboard composes a structured JSON object or a readable Markdown document from the current incident report and submitted feedback. It uses a browser `Blob` download and includes model evidence, certificate scope, LIME contributions, and limitation text. Raw feature dictionaries are not part of the export payload.
+
+**Tradeoff:** Exports exist only for the current browser analysis state. Recovering a prior report from the audit log as a formatted document is intentionally left outside this small demonstrator.
+
 ### 2026-08-23 - Phase 1 baseline result
 
 **Decision:** Treat the 20-epoch MLP trained on the official UNSW-NB15 train CSV as the first shared baseline for downstream attacks and defenses.

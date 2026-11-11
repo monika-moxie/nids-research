@@ -40,6 +40,8 @@ class DeploymentIntelligenceApiTests(unittest.TestCase):
 
         self.assertEqual(dashboard.status_code, 200)
         self.assertIn("NIDS Analyst Console", dashboard.text)
+        self.assertIn('id="download-markdown"', dashboard.text)
+        self.assertIn('id="download-json"', dashboard.text)
         self.assertEqual(demo.status_code, 200)
         self.assertEqual(set(demo.json()["features"]), set(self.valid_features))
 
@@ -65,6 +67,35 @@ class DeploymentIntelligenceApiTests(unittest.TestCase):
         self.assertTrue(response_data["explanation"]["top_features"])
         self.assertIn(response_data["decision"]["action"], {"escalate", "suppress"})
         self.assertEqual(response_data["incident_report"]["status"], "draft")
+
+    def test_analyst_feedback_updates_auditable_incident_report(self):
+        with TestClient(app) as client:
+            intelligence = client.post("/intelligence", json={"features": self.valid_features})
+            report_id = intelligence.json()["incident_report"]["report_id"]
+            feedback = client.post(
+                "/feedback",
+                json={
+                    "report_id": report_id,
+                    "verdict": "confirmed_attack",
+                    "analyst_note": "Correlated with gateway telemetry.",
+                },
+            )
+            audit_log = client.get("/audit-log?limit=100")
+
+        self.assertEqual(feedback.status_code, 200)
+        self.assertEqual(feedback.json()["analyst_verdict"], "confirmed_attack")
+        matching_records = [record for record in audit_log.json()["records"] if record["report_id"] == report_id]
+        self.assertEqual(len(matching_records), 1)
+        self.assertEqual(matching_records[0]["analyst_note"], "Correlated with gateway telemetry.")
+
+    def test_feedback_rejects_unknown_report(self):
+        with TestClient(app) as client:
+            response = client.post(
+                "/feedback",
+                json={"report_id": "NIDS-UNKNOWN", "verdict": "needs_review", "analyst_note": ""},
+            )
+
+        self.assertEqual(response.status_code, 404)
 
     def test_unknown_or_missing_schema_is_rejected(self):
         invalid_features = dict(self.valid_features)

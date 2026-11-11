@@ -445,3 +445,53 @@ Analysts triage collections of flows rather than manually pasting every flow one
 
 **Analogy:**
 The batch queue is like an airport security screening lane: it quickly identifies bags needing inspection, while the careful inspection happens only after one is selected.
+
+### 2026-10-22 - Phase 8: Analyst Feedback and Audit Trail
+
+**What it does in plain language:**
+Lets an analyst mark a generated incident report as a confirmed attack, a false positive, or still needing review, and saves that decision with an optional note in a local audit log.
+
+**Why it exists:**
+The dashboard supports analysts; it does not replace them. Feedback makes the final human decision visible and creates a traceable connection between a model recommendation and the reviewer outcome.
+
+**Likely teacher questions and confident answers:**
+
+1. **Does this feedback automatically retrain the model?**
+   No. The feedback is an audit record only. Automatic retraining would require a separate data-quality, labeling, privacy, and evaluation process.
+
+2. **What exactly is stored in the database?**
+   Report ID, time, recommendation, severity, attack probability, certificate radius, analyst verdict, and optional note. Raw flow features are deliberately not copied into the audit database.
+
+3. **How does the system know feedback belongs to the correct alert?**
+   The detailed analysis generates a unique report ID. The feedback endpoint updates only that ID and returns 404 if the report was not created locally.
+
+4. **Is this production-ready auditing?**
+   No. It is a local SQLite demonstrator. A production system would need authentication, role-based access, retention controls, encryption, backups, and tamper-evident logs.
+
+**Analogy:**
+This is like a reviewer signing a laboratory result sheet: the instrument's reading is preserved, and the reviewer records what they concluded from it.
+
+### 2026-11-11 - Phase 8: Incident Report Export
+
+**What it does in plain language:**
+Lets an analyst download the current incident draft as either a readable Markdown file or structured JSON after reviewing a flow.
+
+**Why it exists:**
+An alert is useful only if it can be handed to another reviewer or retained as a concise record. Export packages the model recommendation, supporting evidence, and analyst verdict into one local artifact.
+
+**Likely teacher questions and confident answers:**
+
+1. **What is the difference between JSON and Markdown export?**
+   JSON preserves structured fields for programs or later processing. Markdown is designed for a person to read, paste into an issue tracker, or convert to a report.
+
+2. **Does the export include the original network-flow data?**
+   No. It exports report-level evidence only: prediction, certificate scope, LIME features, recommendation, limitation, and optional feedback. Raw features are intentionally excluded.
+
+3. **Can an analyst export before entering feedback?**
+   Yes. The report is still useful as a draft. When feedback exists, the same export includes the selected verdict, note, and feedback timestamp.
+
+4. **Is this a secure document-management system?**
+   No. It is a local browser download for the demonstrator. Production export would need access control, encryption, retention rules, and secure storage.
+
+**Analogy:**
+The export is like printing a concise case file: it carries the finding, the evidence, and the review decision, but not every piece of raw source material.

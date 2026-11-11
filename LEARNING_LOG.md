@@ -211,3 +211,25 @@ The browser sends a CSV as multipart form data. The API limits it to 500 rows an
 
 **Viva defense point:**
 The batch queue is not a new research metric and does not claim that every alert is certified. It is a practical Phase 8 workflow that keeps fast prediction separate from per-flow evidence generation and human review.
+
+### 2026-10-22 - Phase 8: Human-in-the-loop feedback
+
+**Why we're doing it:**
+A prediction and escalation recommendation are decision support, not a replacement for analysts. Recording a human verdict makes the system's use accountable and gives the demonstration a realistic end point: the alert can be confirmed, dismissed as a false positive, or kept open for review.
+
+**How it works technically:**
+When `/intelligence` creates a report, the backend stores a small SQLite row keyed by the report ID. The row contains model decision metadata but no raw feature dictionary. The dashboard sends one of three controlled verdicts and an optional note to `/feedback`; the API updates that exact row and rejects IDs it did not create. `/audit-log` returns recent local rows for review.
+
+**Viva defense point:**
+The audit trail improves traceability, not model accuracy. It is local and unauthenticated, so it is a demonstrator feature rather than a claim of production-grade security governance.
+
+### 2026-11-11 - Phase 8: Privacy-minimizing incident handoff
+
+**Why we're doing it:**
+An analyst needs to pass a reviewed alert to another person or preserve it as evidence. A downloadable report closes the loop between detection, explanation, human judgment, and operational handoff.
+
+**How it works technically:**
+The browser takes the current incident-report object and any feedback returned by `/feedback`, formats them as JSON or Markdown, places the content in a `Blob`, and triggers a file download. The export uses report-level model evidence and deliberately leaves out the raw JSON flow submitted to the model.
+
+**Viva defense point:**
+Exporting a report does not make the prediction more reliable and does not create a new research result. It is a practical deployment feature that preserves the system's limitation statement and supports accountable human review.

@@ -73,11 +73,22 @@
           </div>
 
           <article class="surface incident-report">
-            <div class="surface-heading"><div><p class="eyebrow">Draft report</p><h3 id="report-id">Incident report</h3></div><button id="copy-report" class="icon-button" title="Copy incident report"><i data-lucide="copy"></i></button></div>
+            <div class="surface-heading"><div><p class="eyebrow">Draft report</p><h3 id="report-id">Incident report</h3></div><div class="report-actions"><button id="download-markdown" class="icon-button" title="Download incident report as Markdown"><i data-lucide="file-text"></i></button><button id="download-json" class="icon-button" title="Download incident report as JSON"><i data-lucide="download"></i></button><button id="copy-report" class="icon-button" title="Copy incident report"><i data-lucide="copy"></i></button></div></div>
             <div class="report-grid">
               <div><span>Status</span><strong id="report-status">—</strong></div>
               <div><span>Recommended step</span><strong id="next-step">—</strong></div>
               <div class="full"><span>Limitation</span><strong id="report-limitation">—</strong></div>
+            </div>
+            <div class="feedback-controls">
+              <div><p class="eyebrow">Human review</p><h3>Analyst verdict</h3></div>
+              <div class="feedback-actions">
+                <button class="button feedback-confirm" data-verdict="confirmed_attack" title="Record that an analyst confirmed this alert">Confirm attack</button>
+                <button class="button feedback-false" data-verdict="false_positive" title="Record that an analyst marked this alert as false">Mark false positive</button>
+                <button class="button secondary" data-verdict="needs_review" title="Keep this alert open for further review">Needs review</button>
+              </div>
+              <label for="analyst-note">Optional analyst note</label>
+              <textarea id="analyst-note" class="analyst-note" maxlength="1000" placeholder="Add a short review note"></textarea>
+              <p id="feedback-status" class="feedback-status">No analyst verdict recorded.</p>
             </div>
           </article>
         </div>
